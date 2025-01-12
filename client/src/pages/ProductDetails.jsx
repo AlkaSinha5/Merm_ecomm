@@ -220,7 +220,7 @@ const ProductDetails = () => {
 
   useEffect(() => {
     getProduct();
-    checkFavourite();
+    // checkFavourite();
   }, []);
 
   return (

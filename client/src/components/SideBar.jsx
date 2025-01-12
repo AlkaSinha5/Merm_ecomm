@@ -1,17 +1,40 @@
-// components/Sidebar.js
+// Sidebar.js
 import React from "react";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+// Styled Component for Sidebar
+const SidebarContainer = styled.div`
+  width: 250px;
+  background-color: #4a3f46;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;
+
+const SidebarLink = styled(Link)`
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #555;
+  }
+`;
 
 const Sidebar = () => {
   return (
-    <div style={{ width: "200px", background: "#f4f4f4", height: "100vh", padding: "20px" }}>
-      <h3>Admin Panel</h3>
-      <ul>
-        <li><Link to="/">Dashboard</Link></li>
-        <li><Link to="/users">Users</Link></li>
-        <li><Link to="/products">Products</Link></li>
-      </ul>
-    </div>
+    <SidebarContainer>
+      <h2>Admin Panel</h2>
+      <SidebarLink to="/admin/dashboard">Dashboard</SidebarLink>
+      <SidebarLink to="/admin/users">Manage Users</SidebarLink>
+      <SidebarLink to="/admin/products">Add Products</SidebarLink>
+      <SidebarLink to="/admin/products/list">Manage Product</SidebarLink>
+    </SidebarContainer>
   );
 };
 

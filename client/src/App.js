@@ -1,6 +1,6 @@
 import styled, { ThemeProvider } from "styled-components";
 import { lightTheme } from "./utils/Themes";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import './App.css';
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -15,10 +15,15 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import Footer from "./components/Footer";
-import Dashboard from "./pages/Dashboard";
 import Users from "./pages/UserPage";
 import Products from "./pages/Product";
+import Dashboard from "./components/Dashboard";
+import OrderManagement from "./pages/OrderManagement";
+import ProductPage from "./pages/productList";
+import EditProductPage from "./pages/productEdit";
 
+
+// Styled Components
 const Container = styled.div`
   width: 100%;
   min-height: 100vh;
@@ -33,7 +38,7 @@ const Container = styled.div`
 
 const MainContent = styled.div`
   flex-grow: 1;
-  padding-bottom: 60px; /* Ensure content doesn't overlap footer */
+  padding-bottom: 60px;
 `;
 
 const FooterStyled = styled.footer`
@@ -46,6 +51,7 @@ const FooterStyled = styled.footer`
   left: 0;
 `;
 
+// Main App Component
 function App() {
   const { currentUser } = useSelector((state) => state.user); // Accessing Redux state
   const [openAuth, setOpenAuth] = useState(false); // Local state for authentication modal
@@ -66,33 +72,12 @@ function App() {
 
       <BrowserRouter>
         <Container>
-          {/* Navbar Component */}
-          <Navbar setOpenAuth={setOpenAuth} currentUser={currentUser} />
-
-          {/* Main Content (All Routes) */}
-          <MainContent>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/shop" element={<ShopListing />} />
-              <Route path="/favorite" element={<Favourite />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/shop/:id" element={<ProductDetails />} />
-              <Route path="/contact" element={<ContactUsPage />} />
-              <Route path="/dashboard" element={<Dashboard/>} />
-              <Route path="/users" element={<Users/>} />
-              <Route path="/products" element={<Products />} />
-            </Routes>
-          </MainContent>
-
-          {/* Authentication Modal */}
-          {openAuth && (
-            <Authentication openAuth={openAuth} setOpenAuth={setOpenAuth} />
-          )}
-
-          {/* Footer */}
-          <FooterStyled>
-            <Footer />
-          </FooterStyled>
+          {/* Main Content */}
+          <MainRoutes
+            currentUser={currentUser}
+            openAuth={openAuth}
+            setOpenAuth={setOpenAuth}
+          />
         </Container>
       </BrowserRouter>
     </ThemeProvider>
@@ -100,3 +85,47 @@ function App() {
 }
 
 export default App;
+
+// Separate Main Routes Logic
+function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
+  const location = useLocation(); // Use location to check current path
+  const isAdminRoute = location.pathname.startsWith("/admin"); // Identify admin routes
+
+  return (
+    <>
+      {/* Render Navbar only for non-admin routes */}
+      {!isAdminRoute && <Navbar setOpenAuth={setOpenAuth} currentUser={currentUser} />}
+
+      <MainContent>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<ShopListing />} />
+          <Route path="/favorite" element={<Favourite />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/shop/:id" element={<ProductDetails />} />
+          <Route path="/contact" element={<ContactUsPage />} />
+
+          {/* Admin Routes */}
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/users" element={<Users />} />
+          <Route path="/admin/products" element={<Products />} />
+          <Route path="/admin/products/list" element={<ProductPage />} />
+          <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
+        </Routes>
+      </MainContent>
+
+      {/* Render Footer only for non-admin routes */}
+      {!isAdminRoute && (
+        <FooterStyled>
+          <Footer />
+        </FooterStyled>
+      )}
+
+      {/* Authentication Modal */}
+      {openAuth && (
+        <Authentication openAuth={openAuth} setOpenAuth={setOpenAuth} />
+      )}
+    </>
+  );
+}
