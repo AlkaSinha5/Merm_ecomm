@@ -37,10 +37,16 @@ export const getFavourite = async (token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const addToFavourite = async (token, data) =>
-  await API.post(`/user/favorite/`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  export const addToFavourite = async (token, data) => {
+    // Log the data being passed to the function
+    console.log("data addtoFav", data);
+  
+    // Make the API request and return the response
+    return await API.post(`/user/favorite/`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  };
+  
 
 export const deleteFromFavourite = async (token, data) =>
   await API.patch(`/user/favorite/`, data, {

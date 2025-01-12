@@ -10,7 +10,6 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
-
 const MainContent = styled.div`
   flex: 1;
   padding: 20px;
@@ -81,6 +80,23 @@ const Button = styled.button`
   }
 `;
 
+const ImagePreview = styled.div`
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
+`;
+
 // AddProduct Component
 const AddProduct = () => {
   const [product, setProduct] = useState({
@@ -102,11 +118,33 @@ const AddProduct = () => {
         ...prev,
         price: { ...prev.price, [e.target.dataset.field]: value },
       }));
+    } else if (name === "sizes" || name === "category") {
+      setProduct((prev) => ({
+        ...prev,
+        [name]: value.split(",").map((item) => item.trim()), // Convert to array of strings
+      }));
     } else {
       setProduct((prev) => ({
         ...prev,
         [name]: value,
       }));
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    // Convert the image to base64 string
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProduct((prev) => ({
+        ...prev,
+        img: reader.result, // This will be the base64 encoded image string
+      }));
+    };
+
+    if (file) {
+      reader.readAsDataURL(file); // This will trigger the `onloadend` event
     }
   };
 
@@ -119,10 +157,21 @@ const AddProduct = () => {
     setError(null);
     setLoading(true);
 
+    // Prepare the data to send, including the base64 image
+    const productData = {
+      title,
+      name,
+      desc,
+      img, // The img is now a base64 string
+      price,
+      sizes: JSON.stringify(product.sizes),
+      category: JSON.stringify(product.category),
+    };
+
     try {
       const response = await axios.post(
         "http://localhost:8080/api/products/add",
-        [product]
+        productData
       );
       console.log("Product added successfully:", response.data);
       // Handle success (e.g., reset form, navigate to another page)
@@ -136,7 +185,7 @@ const AddProduct = () => {
   return (
     <Container>
       {/* Sidebar */}
-     <Sidebar/>
+      <Sidebar />
 
       {/* Main Content */}
       <MainContent>
@@ -157,13 +206,19 @@ const AddProduct = () => {
               onChange={handleInputChange}
               placeholder="Product Name"
             />
+            {/* Image Upload Input */}
             <Input
               type="file"
               name="img"
-              value={product.img}
-              onChange={handleInputChange}
-              placeholder="Product Image URL"
+              onChange={handleFileChange}
+              placeholder="Product Image"
             />
+            {/* Image Preview */}
+            {product.img && (
+              <ImagePreview>
+                <img src={product.img} alt="Preview" />
+              </ImagePreview>
+            )}
             <Input
               type="number"
               name="price"
@@ -198,13 +253,13 @@ const AddProduct = () => {
             />
             <Textarea
               name="sizes"
-              value={product.sizes}
+              value={product.sizes.join(", ")}
               onChange={handleInputChange}
               placeholder="Sizes (comma separated)"
             />
             <Textarea
               name="category"
-              value={product.category}
+              value={product.category.join(", ")}
               onChange={handleInputChange}
               placeholder="Categories (comma separated)"
             />

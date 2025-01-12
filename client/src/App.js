@@ -21,6 +21,7 @@ import Dashboard from "./components/Dashboard";
 import OrderManagement from "./pages/OrderManagement";
 import ProductPage from "./pages/productList";
 import EditProductPage from "./pages/productEdit";
+import UserOrdersPage from "./pages/Order";
 
 
 // Styled Components
@@ -61,7 +62,7 @@ function App() {
       {/* Toast Notification Container */}
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={1000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -105,6 +106,7 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/cart" element={<Cart />} />
           <Route path="/shop/:id" element={<ProductDetails />} />
           <Route path="/contact" element={<ContactUsPage />} />
+          <Route path="/order" element={<UserOrdersPage />} />
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<Dashboard />} />

@@ -171,7 +171,8 @@ const ProductCard = ({ product }) => {
   const addFavorite = async () => {
     setFavoriteLoading(true);
     const token = localStorage.getItem("krist-app-token");
-    await addToFavourite(token, { productID: product?._id })
+    console.log("fav",product?._id)
+    await addToFavourite(token, { productId: product?._id })
       .then((res) => {
         setFavorite(true);
         setFavoriteLoading(false);
@@ -219,7 +220,7 @@ const ProductCard = ({ product }) => {
 
   const addCart = async () => {
     const token = localStorage.getItem("krist-app-token");
-    await addToCart(token, { productId: product?._id, quantity: 1 })
+    await addToCart(token, { productId: product?._id, quantity: 1,name:product?.name })
       .then((res) => {
         toast.success(res.data.message);
         navigate("/cart");

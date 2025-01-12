@@ -68,6 +68,22 @@ const Button = styled.button`
     background-color: #0056b3;
   }
 `;
+const ImagePreview = styled.div`
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
+`;
 
 const EditProductPage = () => {
   const [product, setProduct] = useState({
@@ -118,6 +134,22 @@ const EditProductPage = () => {
       }));
     }
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    // Convert the image to base64 string
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProduct((prev) => ({
+        ...prev,
+        img: reader.result, // This will be the base64 encoded image string
+      }));
+    };
+
+    if (file) {
+      reader.readAsDataURL(file); // This will trigger the `onloadend` event
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -163,11 +195,17 @@ const EditProductPage = () => {
 
           <Label>Image URL</Label>
           <Input
-            type="text"
-            name="img"
-            value={product.img}
-            onChange={handleChange}
-          />
+              type="file"
+              name="img"
+              onChange={handleFileChange}
+              placeholder="Product Image"
+            />
+            {/* Image Preview */}
+            {product.img && (
+              <ImagePreview>
+                <img src={product.img} alt="Preview" />
+              </ImagePreview>
+            )}
 
           <Label>Original Price</Label>
           <Input

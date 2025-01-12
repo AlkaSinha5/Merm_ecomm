@@ -4,11 +4,9 @@ import TextInput from "./TextInput";
 import Button from "./Button";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/reducers/userSlice";
-import { toast } from "react-toastify"; // Import toast for notifications
-import axios from "axios"; // Ensure axios is imported
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { UserSignIn } from "../api";
-
 
 const Container = styled.div`
   width: 100%;
@@ -31,40 +29,39 @@ const Span = styled.div`
 `;
 
 const SignIn = ({ onLoginSuccess }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  
 
   const handleSignIn = async () => {
     setLoading(true); // Show loading state during API call
     try {
-      // const response = await axios.post("http://localhost:8080/api/user/signin", {
-      //   email,
-      //   password,
-      // });
-      const response = await UserSignIn({  email, password });
+      const response = await UserSignIn({ email, password });
+    console.log(response)
       // Dispatch user data and token to Redux store
       dispatch(loginSuccess(response.data));
 
       // Trigger success toast
-      console.log(response.data.message)
       toast.success(response.data.message);
 
-      // Redirect to the home page
-      
-      // navigate("/");
-       // Redirect to home after login
-      //  window.location.href = "/";
-      if (response.data.message === "Login Successfully") {
+      // Check user role and navigate accordingly
+      const { role } = response.data.user; // Assuming the role is present in `response.data.user`
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
         navigate("/");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
-      
 
-
-      // onLoginSuccess(); // Trigger callback for other logic, if needed
+      // Call onLoginSuccess callback if needed
+      onLoginSuccess && onLoginSuccess();
     } catch (error) {
       if (error.response && error.response.data) {
         // Display backend error message in the toast
@@ -72,7 +69,7 @@ const SignIn = ({ onLoginSuccess }) => {
       } else {
         // Display generic error if no backend message is present
         toast.error(error.message || "Something went wrong");
-      } 
+      }
     } finally {
       setLoading(false); // Reset loading state
     }
@@ -98,11 +95,7 @@ const SignIn = ({ onLoginSuccess }) => {
           value={password}
           handelChange={(e) => setPassword(e.target.value)}
         />
-        <Button
-          text="Sign In"
-          onClick={handleSignIn}
-          isLoading={loading}
-        />
+        <Button text="Sign In" onClick={handleSignIn} isLoading={loading} />
       </div>
     </Container>
   );

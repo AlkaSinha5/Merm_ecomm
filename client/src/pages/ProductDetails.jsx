@@ -153,7 +153,7 @@ const ProductDetails = () => {
   const addFavorite = async () => {
     setFavoriteLoading(true);
     const token = localStorage.getItem("krist-app-token");
-    await addToFavourite(token, { productID: product?._id })
+    await addToFavourite(token, { productId: product?._id })
       .then((res) => {
         setFavorite(true);
         setFavoriteLoading(false);

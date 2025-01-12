@@ -1,9 +1,11 @@
 import express from "express";
 import {
+  UserData,
   UserLogin,
   UserRegister,
   addToCart,
   addToFavorites,
+  deleteUser,
   getAllCartItems,
   getAllOrders,
   getUserFavourites,
@@ -17,6 +19,8 @@ const router = express.Router();
 
 router.post("/signup", UserRegister);
 router.post("/signin", UserLogin);
+router.get("/get",UserData)
+router.delete("/delete/:id",deleteUser)
 
 //cart
 router.get("/cart", verifyToken, getAllCartItems);

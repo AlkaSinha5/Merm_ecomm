@@ -1,9 +1,8 @@
-// Dashboard.js
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import Sidebar from "./SideBar";
-
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -21,32 +20,38 @@ const StatsContainer = styled.div`
   gap: 20px;
 `;
 
-const StatCard = styled.div`
+const StatCard = styled(Link)`
   background: ${(props) => props.color || "white"};
   padding: 20px;
   border-radius: 10px;
   flex: 1;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
 `;
 
 const Dashboard = () => {
   const [data, setData] = useState({
     totalProducts: 0,
     totalUsers: 0,
-    totalSales: 0,
   });
 
   // Fetch data from the API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/user/get");
-        const res = await axios.get("http://localhost:8080/api/products/");
+        const usersResponse = await axios.get("http://localhost:8080/api/user/get");
+        const productsResponse = await axios.get("http://localhost:8080/api/products/");
         setData({
-          totalProducts: res.data.length,
-          totalUsers: response.data.count,
-          totalSales: response.data.totalSales,
+          totalProducts: productsResponse.data.length,
+          totalUsers: usersResponse.data.count,
         });
       } catch (error) {
         console.error("Error fetching data", error);
@@ -65,18 +70,14 @@ const Dashboard = () => {
       <MainContent>
         <h1>Dashboard</h1>
         <StatsContainer>
-          <StatCard color="#afedaf">
+          <StatCard to="/admin/products/list" color="#afedaf">
             <h3>Total Products</h3>
             <p>{data.totalProducts}</p>
           </StatCard>
-          <StatCard color="#afede6">
+          <StatCard to="/admin/users" color="#afede6">
             <h3>Total Users</h3>
             <p>{data.totalUsers}</p>
           </StatCard>
-          {/* <StatCard color="#e2afed">
-            <h3>Total Sales</h3>
-            <p>${data.totalSales}</p>
-          </StatCard> */}
         </StatsContainer>
       </MainContent>
     </Container>
