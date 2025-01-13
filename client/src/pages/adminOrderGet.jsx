@@ -13,7 +13,7 @@ const Container = styled.div`
 // Sidebar container styling
 const SidebarContainer = styled.div`
   width: 250px;
-  background-color: #343a40;
+  background-color:#4a3f46;
   color: #fff;
   min-height: 100vh;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -131,8 +131,10 @@ const StatusText = styled.span`
 const AdminOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [productDetails, setProductDetails] = useState({});
 
   useEffect(() => {
+    // Fetch orders on component mount
     const fetchOrders = async () => {
       try {
         const response = await axios.get("http://localhost:8080/api/user/orderAdmin", {
@@ -148,6 +150,20 @@ const AdminOrdersPage = () => {
 
     fetchOrders();
   }, []);
+
+  // Fetch product details by productId
+  const fetchProductDetails = async (productId) => {
+    if (productDetails[productId]) return; // Avoid duplicate requests for the same productId
+    try {
+      const response = await axios.get(`http://localhost:8080/api/products/${productId}`);
+      setProductDetails((prevDetails) => ({
+        ...prevDetails,
+        [productId]: response.data, // Store the product details by productId
+      }));
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+    }
+  };
 
   const updateOrderStatus = async (orderId, statusType, newStatus) => {
     try {
@@ -262,11 +278,17 @@ const AdminOrdersPage = () => {
                     </td>
                     <td>
                       <ProductsList>
-                        {order.products.map((productItem) => (
-                          <li key={productItem.product._id}>
-                            Product ID: {productItem.product._id}, Quantity: {productItem.quantity}
+                        {order.products.map((item) => {
+                          fetchProductDetails(item.product); // Fetch product details dynamically
+                          return (
+                            
+                            <li key={item.product}>
+                            {productDetails[item.product]
+                              ? ` Name :${productDetails[item.product].name} Quantity: ${item.quantity}`
+                              : "Loading..."}
                           </li>
-                        ))}
+                          );
+                        })}
                       </ProductsList>
                     </td>
                     <td>{order._id}</td>
