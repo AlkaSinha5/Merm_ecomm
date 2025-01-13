@@ -14,6 +14,7 @@ import {
   placeOrder,
   removeFromCart,
   removeFromFavorites,
+  upDateOrderStatus,
 } from "../controllers/User.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
@@ -34,6 +35,7 @@ router.patch("/cart", verifyToken, removeFromCart);
 router.get("/order", verifyToken, getAllOrders);
 router.get("/orderAdmin", verifyToken, getAllOrdersAdmin);
 router.post("/order", verifyToken, placeOrder);
+router.patch("/orderupdate/:id",verifyToken,upDateOrderStatus)
 
 //favourites
 router.get("/favorite", verifyToken, getUserFavourites);

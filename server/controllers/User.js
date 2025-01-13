@@ -360,3 +360,42 @@ export const getUserFavourites = async (req, res, next) => {
     next(err);
   }
 };
+
+
+import mongoose from 'mongoose';
+
+export const upDateOrderStatus = async (req, res) => {
+
+  const orderId  = req.params.id; // Extract orderId from request params
+  const { orderShipping, orderProcess, orderDeliverd, orderCancel } = req.body; // Extract status fields from request body
+
+  if (!mongoose.Types.ObjectId.isValid(orderId)) {
+    return res.status(400).json({ message: "Invalid order ID" });
+  }
+
+  try {
+    // Find and update the order by its ID with the new status values
+    const updatedOrder = await Orders.findByIdAndUpdate(orderId, {
+      orderShipping,
+      orderProcess,
+      orderDeliverd,
+      orderCancel,
+    }, { new: true }); // 'new: true' ensures the updated order is returned
+
+    console.log('Updated Order:', updatedOrder);
+
+    // Check if the order was found and updated
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Return the updated order as a response
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: "Error updating order", error: error.message });
+  }
+};
+
+
+
