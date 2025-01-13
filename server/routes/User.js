@@ -8,6 +8,7 @@ import {
   deleteUser,
   getAllCartItems,
   getAllOrders,
+  getAllOrdersAdmin,
   getUserFavourites,
   placeOrder,
   removeFromCart,
@@ -29,6 +30,7 @@ router.patch("/cart", verifyToken, removeFromCart);
 
 //order
 router.get("/order", verifyToken, getAllOrders);
+router.get("/orderAdmin", verifyToken, getAllOrdersAdmin);
 router.post("/order", verifyToken, placeOrder);
 
 //favourites

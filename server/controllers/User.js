@@ -110,7 +110,7 @@ export const addToCart = async (req, res, next) => {
   try {
     const { productId, quantity } = req.body;
 
-    if (!productId || !quantity || quantity <= 0 || !name) {
+    if (!productId || !quantity || quantity <= 0 ) {
       return res.status(400).json({ message: "Invalid product or quantity" });
     }
 
@@ -241,6 +241,17 @@ export const getAllOrders = async (req, res, next) => {
   try {
     const userJWT = req.user;
     const orders = await Orders.find({ user: userJWT.id });
+
+    return res.status(200).json(orders);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAllOrdersAdmin = async (req, res, next) => {
+  try {
+    const userJWT = req.user;
+    const orders = await Orders.find();
 
     return res.status(200).json(orders);
   } catch (err) {

@@ -34,6 +34,7 @@ const Sidebar = () => {
       <SidebarLink to="/admin/users">Manage Users</SidebarLink>
       <SidebarLink to="/admin/products">Add Products</SidebarLink>
       <SidebarLink to="/admin/products/list">Manage Product</SidebarLink>
+      <SidebarLink to="/admin/order">Manage Order</SidebarLink>
     </SidebarContainer>
   );
 };

@@ -119,10 +119,10 @@ const Footer = () => {
         <LinksSection>
           <h3 style ={{color:"#008000"}}>Quick Links</h3>
           <ul>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#services">Services</a></li>
+            <li><a href="/Shop">Shop</a></li>
+            <li><a href="/Order">Order</a></li>
             <li><a href="/contact">Contact</a></li>
-            <li><a href="#faq">FAQs</a></li>
+          
           </ul>
         </LinksSection>
 

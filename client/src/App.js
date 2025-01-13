@@ -22,6 +22,7 @@ import OrderManagement from "./pages/OrderManagement";
 import ProductPage from "./pages/productList";
 import EditProductPage from "./pages/productEdit";
 import UserOrdersPage from "./pages/Order";
+import AdminOrdersPage from "./pages/adminOrderGet";
 
 
 // Styled Components
@@ -114,6 +115,7 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/admin/products" element={<Products />} />
           <Route path="/admin/products/list" element={<ProductPage />} />
           <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
+          <Route path="/admin/order" element={<AdminOrdersPage />} />
         </Routes>
       </MainContent>
 

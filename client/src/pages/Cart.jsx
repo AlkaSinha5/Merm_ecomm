@@ -157,7 +157,7 @@ const Cart = () => {
     });
   };
 
-  const addCart = async (id,name) => {
+  const addCart = async (id) => {
     const token = localStorage.getItem("krist-app-token");
     await addToCart(token, { productId: id, quantity: 1 })
       .then((res) => {

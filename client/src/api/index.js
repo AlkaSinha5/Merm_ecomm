@@ -20,10 +20,12 @@ export const getCart = async (token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const addToCart = async (token, data) =>
-  await API.post(`/user/cart/`, data, {
+export const addToCart = async (token, data) =>{
+  console.log(data)
+   return await API.post(`/user/cart/`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
+}
 
 export const deleteFromCart = async (token, data) =>
   await API.patch(`/user/cart/`, data, {

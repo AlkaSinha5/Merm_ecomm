@@ -9,7 +9,7 @@ import {
   SearchRounded,
   ShoppingCartOutlined,
 } from "@mui/icons-material";
-import { Avatar } from "@mui/material";
+import { Avatar, Badge } from "@mui/material";
 import { logout } from "../redux/reducers/userSlice";
 import { useDispatch } from "react-redux";
 
@@ -147,6 +147,9 @@ const TextButton = styled.div`
 const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const favoriteCount = currentUser?.favourites?.length || 0;
+  const cartCount = currentUser?.cart?.length || 0;
+  console.log(currentUser)
   return (
     <Nav>
       <NavbarContainer>
@@ -161,7 +164,7 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
         <NavItems style={{width:"60%"}}>
           <Navlink to="/">Home</Navlink>
           <Navlink to="/Shop">Shop</Navlink>
-          <Navlink to="/New_Arrivals">New Arrivals</Navlink>
+          {/* <Navlink to="/New_Arrivals">New Arrivals</Navlink> */}
           <Navlink to="/Order">Orders</Navlink>
           <Navlink to="/Contact">Contact</Navlink>
         </NavItems>
@@ -170,7 +173,7 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
           <MobileMenu isOpen={isOpen}>
             <Navlink to="/" onClick={() => setIsOpen(!isOpen)}>Home</Navlink>
             <Navlink onClick={() => setIsOpen(!isOpen)} to="/Shop">Shop</Navlink>
-            <Navlink onClick={() => setIsOpen(!isOpen)} to="/New_Arrivals">New Arrivals</Navlink>
+            {/* <Navlink onClick={() => setIsOpen(!isOpen)} to="/New_Arrivals">New Arrivals</Navlink> */}
             <Navlink onClick={() => setIsOpen(!isOpen)} to="/Order">Orders</Navlink>
             <Navlink onClick={() => setIsOpen(!isOpen)} to="/Contact">Contact</Navlink>
             {currentUser ? (
@@ -209,12 +212,16 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
           {currentUser ? (
             <>
               <Navlink to="/favorite">
-                <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
+                <Badge badgeContent={favoriteCount} color="error">
+                  <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
+                </Badge>
               </Navlink>
               <Navlink to="/cart">
-                <ShoppingCartOutlined
-                  sx={{ color: "inherit", fontSize: "28px" }}
-                />
+              <Badge badgeContent={cartCount} color="primary">
+                  <ShoppingCartOutlined
+                    sx={{ color: "inherit", fontSize: "28px" }}
+                  />
+                </Badge>
               </Navlink>
               <Avatar
                 src={currentUser?.img}
@@ -243,12 +250,16 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
           {currentUser ? (
             <>
               <Navlink to="/favorite">
-                <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
+              <Badge badgeContent={favoriteCount} color="error">
+                  <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
+                </Badge>
               </Navlink>
               <Navlink to="/cart">
-                <ShoppingCartOutlined
-                  sx={{ color: "inherit", fontSize: "28px" }}
-                />
+              <Badge badgeContent={cartCount} color="primary">
+                  <ShoppingCartOutlined
+                    sx={{ color: "inherit", fontSize: "28px" }}
+                  />
+                </Badge>
               </Navlink>
               <Avatar
                 src={currentUser?.img}

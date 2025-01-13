@@ -220,7 +220,7 @@ const ProductCard = ({ product }) => {
 
   const addCart = async () => {
     const token = localStorage.getItem("krist-app-token");
-    await addToCart(token, { productId: product?._id, quantity: 1,name:product?.name })
+    await addToCart(token, { productId: product?._id, quantity: 1 })
       .then((res) => {
         toast.success(res.data.message);
         navigate("/cart");
