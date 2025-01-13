@@ -95,6 +95,43 @@ export const UserData = async(req,res)=>{
     });
   }
 }
+export const UserDataGet = async (req, res) => {
+  try {
+    // Fetch user ID from request parameters
+    const userId = req.params.id;
+
+    // Fetch user data with cart and favourites
+    const user = await User.findById(userId);
+
+    // If user is not found, return a 404 response
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Calculate cart and favourite lengths
+    const cartLength = user.cart ? user.cart.length : 0;
+    const favouriteLength = user.favourites ? user.favourites.length : 0;
+
+    // Send response with user data and calculated lengths
+    res.status(200).json({
+      message: "User data fetched successfully",
+      user: {
+        ...user.toObject(), // Convert Mongoose document to plain JavaScript object
+        cartLength,
+        favouriteLength,
+      },
+    });
+  } catch (err) {
+    // Handle errors and send a 500 response
+    res.status(500).json({
+      message: "Error fetching user data",
+      error: err.message,
+    });
+  }
+};
+
 
 export const deleteUser = async(req,res)=>{
   try {

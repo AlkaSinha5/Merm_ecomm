@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import HeaderImage from "../utils/Images/Header.png"
-import {category} from "../utils/data"
+import HeaderImage from "../utils/Images/Header.png";
+import { category } from "../utils/data";
 import ProductCategoryCard from "../components/carts/ProductCategoryCard";
 import ProductCard from "../components/carts/ProductCard";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import { getAllProducts } from "../api";
 
-
 const Container = styled.div`
-  padding: 20px 30px;
-  padding-bottom: 200px;
-  height: 100%;
-  overflow-y: scroll;
+  padding: 20px 30px 20px; /* Reduced bottom padding */
+  height: auto; /* Removed fixed height */
+  overflow-y: auto; /* Changed to auto */
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -22,6 +20,7 @@ const Container = styled.div`
   }
   background: ${({ theme }) => theme.bg};
 `;
+
 const Section = styled.div`
   max-width: 1400px;
   padding: 32px 16px;
@@ -29,9 +28,10 @@ const Section = styled.div`
   flex-direction: column;
   gap: 28px;
 `;
+
 const Img = styled.img`
   width: 90%;
-  height: 700px;
+  max-height: 700px; /* Added max-height */
   object-fit: cover;
   max-width: 1200px;
 `;
@@ -53,9 +53,11 @@ const CardWrapper = styled.div`
     gap: 14px;
   }
 `;
-const Home =()=>{
+
+const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const getProducts = async () => {
     setLoading(true);
     await getAllProducts().then((res) => {
@@ -67,40 +69,38 @@ const Home =()=>{
   useEffect(() => {
     getProducts();
   }, []);
-    return(
-        <Container>
-            <Section 
-            style={{
-                alignItems:"center"
-            }}
-            >
-            <Img src={HeaderImage} />
-            </Section>
-            <Section >
-            <Title>Shop by Categories</Title>
-            <CardWrapper>
-                {category.map((category)=>(
-                    <ProductCategoryCard category = {category}/>
-                ))}
-            </CardWrapper>
-            </Section>
-            <Section >
-            <Title center>Our BestSeller</Title>
-            <CardWrapper>
-          {products.map((product) => (
-            <ProductCard product={product} />
-          ))}
-          {/* <ProductCard/>
-          <ProductCard/>
-          <ProductCard/>
-          <ProductCard/> */}
-        </CardWrapper>
-            </Section>
 
-            {/* <Footer/>    */}
-        </Container>
-        
-    )
-}
+  return (
+    <Container>
+      {/* Header Section */}
+      <Section style={{ alignItems: "center" }}>
+        <Img src={HeaderImage} />
+      </Section>
+
+      {/* Categories Section */}
+      <Section>
+        <Title>Shop by Categories</Title>
+        <CardWrapper>
+          {category.map((category) => (
+            <ProductCategoryCard key={category.id} category={category} />
+          ))}
+        </CardWrapper>
+      </Section>
+
+      {/* Best Seller Section */}
+      <Section>
+        <Title center>Our BestSeller</Title>
+        <CardWrapper>
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </CardWrapper>
+      </Section>
+
+      {/* Uncomment Footer if needed */}
+      {/* <Footer /> */}
+    </Container>
+  );
+};
 
 export default Home;

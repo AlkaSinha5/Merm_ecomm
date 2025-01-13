@@ -1,6 +1,7 @@
 import express from "express";
 import {
   UserData,
+  UserDataGet,
   UserLogin,
   UserRegister,
   addToCart,
@@ -20,7 +21,8 @@ const router = express.Router();
 
 router.post("/signup", UserRegister);
 router.post("/signin", UserLogin);
-router.get("/get",UserData)
+router.get("/get",UserData);
+router.get("/get/:id",UserDataGet)
 router.delete("/delete/:id",deleteUser)
 
 //cart

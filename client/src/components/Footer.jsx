@@ -3,7 +3,7 @@ import LogoImg from "../utils/Images/Logo.png";
 
 const FooterContainer = styled.footer`
   width: 100%; /* Ensures the footer spans the entire screen width */
-  background-color:#B0BEC5;
+  background-color:#C6C6C6;
   color: #fff;
   padding: 40px 20px;
   display: flex;

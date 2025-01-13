@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import LogoImg from "../utils/Images/Logo.png";
 import { NavLink } from "react-router-dom";
@@ -12,6 +12,7 @@ import {
 import { Avatar, Badge } from "@mui/material";
 import { logout } from "../redux/reducers/userSlice";
 import { useDispatch } from "react-redux";
+import axios from "axios";
 
 
 const Nav = styled.div`
@@ -146,10 +147,25 @@ const TextButton = styled.div`
 
 const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [cartLength, setCartLength] = useState(0);
+  const [favoriteLength, setFavoriteLength] = useState(0);
   const dispatch = useDispatch();
-  const favoriteCount = currentUser?.favourites?.length || 0;
-  const cartCount = currentUser?.cart?.length || 0;
-  console.log(currentUser)
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser && currentUser._id) {
+        try {
+          const response = await axios.get(`http://localhost:8080/api/user/get/${currentUser._id}`);
+          const userData = response.data.user;
+          setCartLength(userData.cartLength || 0);
+          setFavoriteLength(userData.favouriteLength || 0);
+        } catch (error) {
+          console.error("Error fetching user data:", error.message);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [currentUser]);
   return (
     <Nav>
       <NavbarContainer>
@@ -212,12 +228,12 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
           {currentUser ? (
             <>
               <Navlink to="/favorite">
-                <Badge badgeContent={favoriteCount} color="error">
+                <Badge badgeContent={favoriteLength} color="error">
                   <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
                 </Badge>
               </Navlink>
               <Navlink to="/cart">
-              <Badge badgeContent={cartCount} color="primary">
+              <Badge badgeContent={cartLength} color="primary">
                   <ShoppingCartOutlined
                     sx={{ color: "inherit", fontSize: "28px" }}
                   />
@@ -250,12 +266,12 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
           {currentUser ? (
             <>
               <Navlink to="/favorite">
-              <Badge badgeContent={favoriteCount} color="error">
+              <Badge badgeContent={favoriteLength} color="error">
                   <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
                 </Badge>
               </Navlink>
               <Navlink to="/cart">
-              <Badge badgeContent={cartCount} color="primary">
+              <Badge badgeContent={cartLength} color="primary">
                   <ShoppingCartOutlined
                     sx={{ color: "inherit", fontSize: "28px" }}
                   />
