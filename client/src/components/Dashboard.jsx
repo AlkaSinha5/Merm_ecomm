@@ -41,6 +41,7 @@ const Dashboard = () => {
   const [data, setData] = useState({
     totalProducts: 0,
     totalUsers: 0,
+    // totalProductQuantity:0
   });
 
   // Fetch data from the API
@@ -70,14 +71,19 @@ const Dashboard = () => {
       <MainContent>
         <h1>Dashboard</h1>
         <StatsContainer>
-          <StatCard to="/admin/products/list" color="#afedaf">
-            <h3>Total Products</h3>
-            <p>{data.totalProducts}</p>
-          </StatCard>
-          <StatCard to="/admin/users" color="#afede6">
+        <StatCard to="/admin/users" color="#afede6">
             <h3>Total Users</h3>
             <p>{data.totalUsers}</p>
           </StatCard>
+          <StatCard to="/admin/products/list" color="#afedaf">
+            <h3> Total Products </h3>
+            <p>{data.totalProducts}</p>
+          </StatCard>
+          {/* <StatCard to="/admin/products/list" color="#afedaf">
+            <h3> Total Products </h3>
+            <p>{data.totalProductQuantity}</p>
+          </StatCard> */}
+          
         </StatsContainer>
       </MainContent>
     </Container>

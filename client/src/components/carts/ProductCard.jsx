@@ -36,6 +36,11 @@ const Button = styled.button`
   &:active {
     transform: scale(1);
   }
+
+  &:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+  }
 `;
 
 const Card = styled.div`
@@ -162,6 +167,14 @@ const Percent = styled.div`
   color: green;
 `;
 
+const OutOfStock = styled.div`
+  font-size: 14px;
+  font-weight: bold;
+  color: red;
+  margin-top: 10px;
+  text-align: center;
+`;
+
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -171,7 +184,6 @@ const ProductCard = ({ product }) => {
   const addFavorite = async () => {
     setFavoriteLoading(true);
     const token = localStorage.getItem("krist-app-token");
-    console.log("fav",product?._id)
     await addToFavourite(token, { productId: product?._id })
       .then((res) => {
         setFavorite(true);
@@ -180,20 +192,11 @@ const ProductCard = ({ product }) => {
       })
       .catch((error) => {
         setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: error.message,
-            severity: "error",
-          })
-        );
-        // toast.error("Failed to add to favorites!");
         if (error.response && error.response.data) {
-          // Display backend error message in the toast
           toast.error(error.response.data.message || "An error occurred");
         } else {
-          // Display generic error if no backend message is present
           toast.error(error.message || "Something went wrong");
-        } 
+        }
       });
   };
 
@@ -208,12 +211,6 @@ const ProductCard = ({ product }) => {
       })
       .catch((err) => {
         setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
         toast.error("Failed to remove from favorites!");
       });
   };
@@ -224,15 +221,8 @@ const ProductCard = ({ product }) => {
       .then((res) => {
         toast.success(res.data.message);
         navigate("/cart");
-        // toast.success(res.data.message);
       })
       .catch((err) => {
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
         toast.error("Failed to add to cart!");
       });
   };
@@ -250,12 +240,6 @@ const ProductCard = ({ product }) => {
       })
       .catch((err) => {
         setFavoriteLoading(false);
-        dispatch(
-          openSnackbar({
-            message: err.message,
-            severity: "error",
-          })
-        );
       });
   };
 
@@ -273,38 +257,39 @@ const ProductCard = ({ product }) => {
           >
             {favoriteLoading ? (
               <CircularProgress sx={{ fontSize: "20px" }} />
+            ) : favorite ? (
+              <FavoriteRounded sx={{ fontSize: "20px", color: "red" }} />
             ) : (
-              <>
-                {favorite ? (
-                  <FavoriteRounded sx={{ fontSize: "20px", color: "red" }} />
-                ) : (
-                  <FavoriteBorder sx={{ fontSize: "20px" }} />
-                )}
-              </>
+              <FavoriteBorder sx={{ fontSize: "20px" }} />
             )}
           </MenuItem>
-          <MenuItem onClick={() => addCart(product?.id)}>
-            <AddShoppingCartOutlined sx={{ color: "inherit", fontSize: "20px" }} />
+          <MenuItem
+            onClick={() => product?.quantity > 0 && addCart(product?._id)}
+            disabled={product?.quantity === 0}
+          >
+            <AddShoppingCartOutlined
+              sx={{ color: "inherit", fontSize: "20px" }}
+            />
           </MenuItem>
         </Menu>
         <Rate>
           <Rating value={3.5} sx={{ fontSize: "14px" }} />
         </Rate>
       </Top>
-      <Details >
+      <Details>
         <Title>{product?.title}</Title>
         <Desc>{product?.name}</Desc>
         <Price>
           ${product?.price?.org} <Span>${product?.price?.mrp}</Span>
-          <Percent>${product?.price?.off}% Off</Percent>
+          <Percent>{product?.price?.off}% Off</Percent>
         </Price>
-        <Button 
-         onClick={() => navigate(`/shop/${product._id}`)}
-          variant="contained" 
-          fullWidth
-        >
-          View Details
-        </Button>
+        {product?.quantity === 0 ? (
+          <OutOfStock>Out of Stock</OutOfStock>
+        ) : (
+          <Button onClick={() => navigate(`/shop/${product._id}`)}>
+            View Details
+          </Button>
+        )}
       </Details>
     </Card>
   );

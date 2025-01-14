@@ -68,7 +68,6 @@ const Button = styled.button`
   cursor: pointer;
   transition: background-color 0.3s ease;
   text-align: center;
-  
 
   &:hover {
     background-color: #0056b3;
@@ -107,12 +106,14 @@ const AddProduct = () => {
     price: { org: "", mrp: "", off: "" },
     sizes: [],
     category: [],
+    quantity: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
     if (name === "price") {
       setProduct((prev) => ({
         ...prev,
@@ -134,26 +135,31 @@ const AddProduct = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
-    // Convert the image to base64 string
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setProduct((prev) => ({
-        ...prev,
-        img: reader.result, // This will be the base64 encoded image string
-      }));
-    };
+    // Ensure only image files are allowed
+    if (file && file.type.startsWith("image/")) {
+      // Convert the image to base64 string
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProduct((prev) => ({
+          ...prev,
+          img: reader.result, // This will be the base64 encoded image string
+        }));
+      };
 
-    if (file) {
       reader.readAsDataURL(file); // This will trigger the `onloadend` event
+    } else {
+      setError("Please upload a valid image file.");
     }
   };
 
   const handleAddProduct = async () => {
-    const { title, name, desc, img, price } = product;
-    if (!title || !name || !desc || !img || !price.org) {
+    const { title, name, desc, img, price, quantity, sizes, category } = product;
+
+    if (!title || !name || !desc || !img || !price.org || !quantity) {
       setError("All fields are required!");
       return;
     }
+
     setError(null);
     setLoading(true);
 
@@ -164,8 +170,9 @@ const AddProduct = () => {
       desc,
       img, // The img is now a base64 string
       price,
-      sizes: JSON.stringify(product.sizes),
-      category: JSON.stringify(product.category),
+      quantity,
+      sizes: JSON.stringify(sizes),
+      category: JSON.stringify(category),
     };
 
     try {
@@ -175,6 +182,16 @@ const AddProduct = () => {
       );
       console.log("Product added successfully:", response.data);
       // Handle success (e.g., reset form, navigate to another page)
+      setProduct({
+        title: "",
+        name: "",
+        desc: "",
+        img: "",
+        price: { org: "", mrp: "", off: "" },
+        sizes: [],
+        category: [],
+        quantity: "",
+      });
     } catch (error) {
       setError("Failed to add product. Please try again.");
     } finally {
@@ -219,6 +236,13 @@ const AddProduct = () => {
                 <img src={product.img} alt="Preview" />
               </ImagePreview>
             )}
+            <Input
+              type="number"
+              name="quantity"
+              value={product.quantity}
+              onChange={handleInputChange}
+              placeholder="Quantity"
+            />
             <Input
               type="number"
               name="price"

@@ -256,6 +256,7 @@ export const placeOrder = async (req, res, next) => {
     const userJWT = req.user;
     const user = await User.findById(userJWT.id);
 
+    // Create the order
     const order = new Orders({
       products,
       user: user._id,
@@ -263,7 +264,29 @@ export const placeOrder = async (req, res, next) => {
       address,
     });
 
+    for (let productItem of products) {
+     
+      const product = await Products.findById(productItem.product._id);
+     
+      // Validate if the product exists
+      if (!product) {
+        return res.status(404).json({ message: `Product with ID ${productItem.product._id} not found` });
+      }
+
+      // Check if the product has enough quantity
+      if (product.quantity < productItem.quantity) {
+        return res.status(400).json({ message: `Not enough stock for ${product.title}` });
+      }
+
+      // Reduce the product quantity
+      product.quantity -= productItem.quantity;
+      await product.save(); // Save the updated product quantity
+    }
+
+    // Save the order
     await order.save();
+
+    // Clear the user's cart
     user.cart = [];
     await user.save();
 
@@ -272,6 +295,8 @@ export const placeOrder = async (req, res, next) => {
     next(err);
   }
 };
+
+
 
 // Get All Orders
 export const getAllOrders = async (req, res, next) => {

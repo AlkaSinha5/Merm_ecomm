@@ -95,6 +95,7 @@ const EditProductPage = () => {
       off: "",
     },
     img: "",
+    quantity:""
   });
   const [loading, setLoading] = useState(true);
   const { id } = useParams(); // To get the product ID from the URL
@@ -206,7 +207,13 @@ const EditProductPage = () => {
                 <img src={product.img} alt="Preview" />
               </ImagePreview>
             )}
-
+           <Label>Quantity</Label>
+          <Input
+            type="number"
+            name="quantity"
+            value={product.quantity}
+            onChange={handleChange}
+          />
           <Label>Original Price</Label>
           <Input
             type="number"

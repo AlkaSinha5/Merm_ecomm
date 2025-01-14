@@ -153,6 +153,7 @@ const ProductPage = () => {
               <TableHeader>Price (Original)</TableHeader>
               <TableHeader>Price (MRP)</TableHeader>
               <TableHeader>Discount (%)</TableHeader>
+              <TableHeader>Quantity</TableHeader>
               <TableHeader>Action</TableHeader>
             </tr>
           </thead>
@@ -167,6 +168,7 @@ const ProductPage = () => {
                 <TableData>${product.price.org}</TableData>
                 <TableData>${product.price.mrp}</TableData>
                 <TableData>{product.price.off}%</TableData>
+                <TableData>{product.quantity}</TableData>
                 <TableData>
                 <ButtonContainer>
     <Link to={`/admin/products/edit/${product._id}`}>

@@ -17,7 +17,7 @@ export const addProducts = async (req, res, next) => {
     console.log(req.body); // Log the incoming product data
 
     // Destructure the fields from the product data
-    const { title, name, desc, img, price, sizes, category } = productData;
+    const { title, name, desc, img, price, sizes, category,quantity } = productData;
 
     // Validate required fields for the product
     if (!title || !name || !desc || !price) {
@@ -38,6 +38,7 @@ export const addProducts = async (req, res, next) => {
       price,
       sizes,
       category,
+      quantity
     });
 
     try {
