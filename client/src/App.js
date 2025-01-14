@@ -23,6 +23,7 @@ import ProductPage from "./pages/productList";
 import EditProductPage from "./pages/productEdit";
 import UserOrdersPage from "./pages/Order";
 import AdminOrdersPage from "./pages/adminOrderGet";
+import AddCategory from "./pages/AddCategory";
 
 
 // Styled Components
@@ -113,6 +114,7 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/users" element={<Users />} />
           <Route path="/admin/products" element={<Products />} />
+          <Route path="/admin/Category" element={<AddCategory />} />
           <Route path="/admin/products/list" element={<ProductPage />} />
           <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
           <Route path="/admin/order" element={<AdminOrdersPage />} />
