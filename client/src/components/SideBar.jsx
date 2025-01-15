@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
@@ -20,11 +20,11 @@ const SidebarLink = styled(Link)`
   border-radius: 5px;
   transition: background 0.3s ease;
   display: block;
-  
+
   /* Apply highlight for active link */
   &.active {
     background: #333; /* Highlight active link */
-    font-weight: bold;  /* Add bold text for active state */
+    font-weight: bold; /* Add bold text for active state */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add a soft shadow effect */
   }
 
@@ -54,18 +54,41 @@ const MainLink = styled.div`
 `;
 
 const SubLinks = styled.div`
+  margin-top: 10px;
   margin-left: 15px;
   display: ${({ isVisible }) => (isVisible ? "block" : "none")};
 `;
 
 const SubLink = styled(SidebarLink)`
   padding-left: 25px;
+  margin-bottom: 10px;
 `;
 
 const Sidebar = () => {
   const location = useLocation(); // Get current location
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isInformationsOpen, setIsInformationsOpen] = useState(false);
+
+  // Automatically open the correct submenu based on the current path
+  useEffect(() => {
+    // If the current path matches a route inside the Products submenu
+    if (
+      location.pathname.includes("/admin/category") ||
+      location.pathname.includes("/admin/subcategory") ||
+      location.pathname.includes("/admin/products")
+    ) {
+      setIsProductsOpen(true);
+    } else {
+      setIsProductsOpen(false);
+    }
+
+    // If the current path matches a route inside the Informations submenu
+    if (location.pathname.includes("/admin/slidder")) {
+      setIsInformationsOpen(true);
+    } else {
+      setIsInformationsOpen(false);
+    }
+  }, [location.pathname]); // Re-run whenever the path changes
 
   return (
     <SidebarContainer>
@@ -97,6 +120,12 @@ const Sidebar = () => {
             Add Category
           </SubLink>
           <SubLink
+            to="/admin/subcategory"
+            className={location.pathname === "/admin/subcategory" ? "active" : ""}
+          >
+            Add Sub Category
+          </SubLink>
+          <SubLink
             to="/admin/products"
             className={location.pathname === "/admin/products" ? "active" : ""}
           >
@@ -104,6 +133,8 @@ const Sidebar = () => {
           </SubLink>
         </SubLinks>
       </SidebarItem>
+
+      {/* Informations Section */}
       <SidebarItem>
         <MainLink onClick={() => setIsInformationsOpen(!isInformationsOpen)}>
           Informations
@@ -116,7 +147,6 @@ const Sidebar = () => {
           >
             Slider
           </SubLink>
-         
         </SubLinks>
       </SidebarItem>
 

@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 import UserRouter from "./routes/User.js";
 import ProductRoutes from "./routes/Products.js";
 import CategoryRoutes from "./routes/Category.js";
+import SubCategoryRoutes from "./routes/SubCategory.js";
 import SlidderRoutes from "./routes/Slider.js";
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.get("/", async (req, res) => {
 app.use("/api/user/", UserRouter);
 app.use("/api/products/", ProductRoutes);
 app.use("/api/category/", CategoryRoutes);
+app.use("/api/subcategory/", SubCategoryRoutes);
 app.use("/api/slider/", SlidderRoutes);
 
 const connectDB = () => {
