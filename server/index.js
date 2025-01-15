@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 import UserRouter from "./routes/User.js";
 import ProductRoutes from "./routes/Products.js";
 import CategoryRoutes from "./routes/Category.js";
+import SlidderRoutes from "./routes/Slider.js";
 dotenv.config();
 
 const app = express();
@@ -32,6 +33,7 @@ app.get("/", async (req, res) => {
 app.use("/api/user/", UserRouter);
 app.use("/api/products/", ProductRoutes);
 app.use("/api/category/", CategoryRoutes);
+app.use("/api/slider/", SlidderRoutes);
 
 const connectDB = () => {
   mongoose.set("strictQuery", true);

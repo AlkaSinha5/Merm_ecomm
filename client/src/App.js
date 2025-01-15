@@ -24,6 +24,8 @@ import EditProductPage from "./pages/productEdit";
 import UserOrdersPage from "./pages/Order";
 import AdminOrdersPage from "./pages/adminOrderGet";
 import AddCategory from "./pages/AddCategory";
+import AddSlider from "./pages/Slider";
+import HomeSlider from "./components/HomePageSlider";
 
 
 // Styled Components
@@ -109,6 +111,8 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/shop/:id" element={<ProductDetails />} />
           <Route path="/contact" element={<ContactUsPage />} />
           <Route path="/order" element={<UserOrdersPage />} />
+          {/* <Route path="/slider" element={<HomeSlider />} /> */}
+          
 
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<Dashboard />} />
@@ -118,6 +122,7 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/admin/products/list" element={<ProductPage />} />
           <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
           <Route path="/admin/order" element={<AdminOrdersPage />} />
+          <Route path="/admin/slidder" element={<AddSlider />} />
         </Routes>
       </MainContent>
 

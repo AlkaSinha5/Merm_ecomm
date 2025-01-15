@@ -6,6 +6,7 @@ import ProductCategoryCard from "../components/carts/ProductCategoryCard";
 import ProductCard from "../components/carts/ProductCard";
 // import Footer from "../components/Footer";
 import { getAllProducts } from "../api";
+import HomeSlider from "../components/HomePageSlider";
 
 const Container = styled.div`
   padding: 20px 30px 20px; /* Reduced bottom padding */
@@ -73,8 +74,9 @@ const Home = () => {
   return (
     <Container>
       {/* Header Section */}
-      <Section style={{ alignItems: "center" }}>
-        <Img src={HeaderImage} />
+      <Section >
+        <HomeSlider/>
+        
       </Section>
 
       {/* Categories Section */}

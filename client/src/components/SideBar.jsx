@@ -65,6 +65,7 @@ const SubLink = styled(SidebarLink)`
 const Sidebar = () => {
   const location = useLocation(); // Get current location
   const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [isInformationsOpen, setIsInformationsOpen] = useState(false);
 
   return (
     <SidebarContainer>
@@ -101,6 +102,21 @@ const Sidebar = () => {
           >
             Add Product
           </SubLink>
+        </SubLinks>
+      </SidebarItem>
+      <SidebarItem>
+        <MainLink onClick={() => setIsInformationsOpen(!isInformationsOpen)}>
+          Informations
+          <span>{isInformationsOpen ? "▲" : "▼"}</span>
+        </MainLink>
+        <SubLinks isVisible={isInformationsOpen}>
+          <SubLink
+            to="/admin/slidder"
+            className={location.pathname === "/admin/slidder" ? "active" : ""}
+          >
+            Slider
+          </SubLink>
+         
         </SubLinks>
       </SidebarItem>
 
