@@ -7,6 +7,8 @@ import ProductRoutes from "./routes/Products.js";
 import CategoryRoutes from "./routes/Category.js";
 import SubCategoryRoutes from "./routes/SubCategory.js";
 import SlidderRoutes from "./routes/Slider.js";
+import EnquiryRoutes from "./routes/Enquiry.js";
+import AddressRoutes from "./routes/Address.js";
 dotenv.config();
 
 const app = express();
@@ -36,6 +38,8 @@ app.use("/api/products/", ProductRoutes);
 app.use("/api/category/", CategoryRoutes);
 app.use("/api/subcategory/", SubCategoryRoutes);
 app.use("/api/slider/", SlidderRoutes);
+app.use("/api/enquiry/", EnquiryRoutes);
+app.use("/api/address/", AddressRoutes);
 
 const connectDB = () => {
   mongoose.set("strictQuery", true);

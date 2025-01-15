@@ -27,6 +27,8 @@ import AddCategory from "./pages/AddCategory";
 import AddSlider from "./pages/Slider";
 import HomeSlider from "./components/HomePageSlider";
 import AddSubCategory from "./pages/AddSubCategory";
+import EnquiriesPage from "./pages/EnquiryGet";
+import EditPage from "./pages/addressEdit";
 
 
 // Styled Components
@@ -125,6 +127,8 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/admin/products/edit/:id" element={<EditProductPage />} />
           <Route path="/admin/order" element={<AdminOrdersPage />} />
           <Route path="/admin/slidder" element={<AddSlider />} />
+          <Route path="/admin/enquiry" element={<EnquiriesPage />} />
+          <Route path="/admin/address" element={<EditPage />} />
         </Routes>
       </MainContent>
 

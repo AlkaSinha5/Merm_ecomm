@@ -1,15 +1,16 @@
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import LogoImg from "../utils/Images/Logo.png";
 
 const FooterContainer = styled.footer`
-  width: 100%; /* Ensures the footer spans the entire screen width */
-  background-color:#C6C6C6;
+  width: 100%;
+  background-color: #c6c6c6;
   color: #fff;
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  box-sizing: border-box; /* Includes padding in the total width */
+  box-sizing: border-box;
 `;
 
 const FooterContent = styled.div`
@@ -76,7 +77,7 @@ const ContactSection = styled.div`
 
   p {
     margin: 5px 0;
-    color:  #000000;
+    color: #000000;
   }
 `;
 
@@ -106,34 +107,66 @@ const FooterBottom = styled.div`
   }
 `;
 
-
 const Footer = () => {
+  const [footerData, setFooterData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchFooterData = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/address");
+        if (!response.ok) {
+          throw new Error("Failed to fetch footer data.");
+        }
+        const data = await response.json();
+        setFooterData(data[0]); // Assuming only one record is returned
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFooterData();
+  }, []);
+
+  if (loading) {
+    return <p>Loading footer...</p>;
+  }
+
+  if (error) {
+    return <p style={{ color: "red" }}>{error}</p>;
+  }
+
   return (
     <FooterContainer>
       <FooterContent>
         <LogoSection>
-        <Logo src={LogoImg} />
-          <p>Building great experiences.</p>
+          <Logo src={LogoImg} />
+          <p>{footerData.about}</p>
         </LogoSection>
 
         <LinksSection>
-          <h3 style ={{color:"#008000"}}>Quick Links</h3>
+          <h3 style={{ color: "#008000" }}>Quick Links</h3>
           <ul>
             <li><a href="/Shop">Shop</a></li>
             <li><a href="/Order">Order</a></li>
-            <li><a href="/contact">Contact</a></li>
-          
+            <li><a href="/Contact">Contact</a></li>
           </ul>
         </LinksSection>
 
         <ContactSection>
           <h3 style={{ color: "#008000" }}>Contact Us</h3>
-          <p>Email: support@mybrand.com</p>
-          <p>Phone: +1 234 567 890</p>
+          <p>Email: {footerData.email}</p>
+          <p>Phone: {footerData.mobile}</p>
+          <p>Address: {footerData.address}</p>
           <SocialIcons>
-            <a href="https://facebook.com">🌐</a>
-            <a href="https://twitter.com">🌐</a>
-            <a href="https://instagram.com">🌐</a>
+            <a href={footerData.facebookLink}>🌐</a>
+            <a href={footerData.twitterLink}>🌐</a>
+            <a href={footerData.youtubeLink}>🌐</a>
+            <a href={footerData.instagramLink}>🌐</a>
+            <a href={footerData.linkedinLink}>🌐</a>
           </SocialIcons>
         </ContactSection>
       </FooterContent>

@@ -147,6 +147,18 @@ const Sidebar = () => {
           >
             Slider
           </SubLink>
+          <SubLink
+            to="/admin/enquiry"
+            className={location.pathname === "/admin/enquiry" ? "active" : ""}
+          >
+            Enquiry
+          </SubLink>
+          <SubLink
+            to="/admin/address"
+            className={location.pathname === "/admin/address" ? "active" : ""}
+          >
+            Address
+          </SubLink>
         </SubLinks>
       </SidebarItem>
 

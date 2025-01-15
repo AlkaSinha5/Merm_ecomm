@@ -9,7 +9,7 @@ import { getAllProducts } from "../api";
 import HomeSlider from "../components/HomePageSlider";
 
 const Container = styled.div`
-  padding: 20px 30px 20px; /* Reduced bottom padding */
+  padding: 20px 0px 20px 0px; /* Reduced bottom padding */
   height: auto; /* Removed fixed height */
   overflow-y: auto; /* Changed to auto */
   display: flex;
@@ -28,6 +28,7 @@ const Section = styled.div`
   display: flex;
   flex-direction: column;
   gap: 28px;
+  margin-top: -65px;
 `;
 
 const Img = styled.img`
@@ -81,7 +82,7 @@ const Home = () => {
 
       {/* Categories Section */}
       <Section>
-        <Title>Shop by Categories</Title>
+        <Title center>Shop by Categories</Title>
         <CardWrapper>
           {category.map((category) => (
             <ProductCategoryCard key={category.id} category={category} />
