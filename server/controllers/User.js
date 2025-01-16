@@ -6,6 +6,15 @@ import User from "../models/User.js";
 import Orders from "../models/Orders.js";
 import Products from "../models/Products.js"; // Ensure Products model is imported
 
+import { v2 as cloudinary } from "cloudinary";
+
+
+cloudinary.config({
+  cloud_name: "dhzk0ztrn",
+  api_key: "571339484391153",
+  api_secret: "WWmOJpVF5y02r7Blu2oAr0RxbU0",
+});
+
 dotenv.config();
 
 // User Register
@@ -77,6 +86,55 @@ export const UserLogin = async (req, res, next) => {
   }
 };
 
+
+export const UserUpdate = async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
+
+    let photoUrl;
+
+    // Upload photo to Cloudinary if a file is provided
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "user_photos", // Optional: Folder in Cloudinary
+      });
+      photoUrl = result.secure_url;
+    }
+
+    // Update user in database
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        email,
+        password,
+        ...(photoUrl && { photo: photoUrl }), // Only update photo if uploaded
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, updatedUser });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+export const UserGetById = async(req,res) =>{
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user data", error: error.message });
+  }
+}
 export const UserData = async(req,res)=>{
   try {
     // Fetch all users from the database (you can add pagination, filtering, etc. as needed)

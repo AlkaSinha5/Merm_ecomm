@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
-  {
+  { 
+    photo:{
+    type: String,
+    default:""
+  },
     name: {
       type: String,
       required: true,

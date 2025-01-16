@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import LogoImg from "../utils/Images/Logo.png";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import {
   FavoriteBorder,
@@ -9,7 +9,7 @@ import {
   SearchRounded,
   ShoppingCartOutlined,
 } from "@mui/icons-material";
-import { Avatar, Badge } from "@mui/material";
+import { Avatar, Badge, Menu, MenuItem } from "@mui/material";
 import { logout } from "../redux/reducers/userSlice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -133,15 +133,18 @@ const MobileMenu = styled.ul`
   opacity: ${({ isOpen }) => (isOpen ? "100%" : "0")};
   z-index: ${({ isOpen }) => (isOpen ? "1000" : "-1000")};
 `;
-const TextButton = styled.div`
-  text-align: end;
-  color: ${({ theme }) => theme.secondary};
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  &:hover {
-    color: ${({ theme }) => theme.primary};
+
+const AvatarContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const DropdownMenu = styled(Menu)`
+  .MuiMenuItem-root {
+    padding: 8px 16px;
+    cursor: pointer;
   }
 `;
 
@@ -149,12 +152,17 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [cartLength, setCartLength] = useState(0);
   const [favoriteLength, setFavoriteLength] = useState(0);
+  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (currentUser && currentUser._id) {
         try {
-          const response = await axios.get(`http://localhost:8080/api/user/get/${currentUser._id}`);
+          const response = await axios.get(
+            `http://localhost:8080/api/user/get/${currentUser._id}`
+          );
           const userData = response.data.user;
           setCartLength(userData.cartLength || 0);
           setFavoriteLength(userData.favouriteLength || 0);
@@ -166,6 +174,24 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
 
     fetchUserData();
   }, [currentUser]);
+
+  const handleAvatarClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setAnchorEl(null);
+  };
+  const handleUpdateProfile = () => {
+    navigate("/userUpdate"); // Redirect to Update Profile page
+    handleClose(); // Close the dropdown menu
+  };
+
   return (
     <Nav>
       <NavbarContainer>
@@ -173,28 +199,33 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
           <MenuRounded style={{ color: "inherit" }} />
         </MobileIcon>
 
-        <NavLogo style={{width:"20%"}}>
+        <NavLogo style={{ width: "20%" }}>
           <Logo src={LogoImg} />
         </NavLogo>
 
-        <NavItems style={{width:"60%"}}>
+        <NavItems style={{ width: "60%" }}>
           <Navlink to="/">Home</Navlink>
           <Navlink to="/Shop">Shop</Navlink>
-          {/* <Navlink to="/New_Arrivals">New Arrivals</Navlink> */}
           <Navlink to="/Order">Orders</Navlink>
           <Navlink to="/Contact">Contact</Navlink>
         </NavItems>
 
         {isOpen && (
           <MobileMenu isOpen={isOpen}>
-            <Navlink to="/" onClick={() => setIsOpen(!isOpen)}>Home</Navlink>
-            <Navlink onClick={() => setIsOpen(!isOpen)} to="/Shop">Shop</Navlink>
-            {/* <Navlink onClick={() => setIsOpen(!isOpen)} to="/New_Arrivals">New Arrivals</Navlink> */}
-            <Navlink onClick={() => setIsOpen(!isOpen)} to="/Order">Orders</Navlink>
-            <Navlink onClick={() => setIsOpen(!isOpen)} to="/Contact">Contact</Navlink>
+            <Navlink to="/" onClick={() => setIsOpen(!isOpen)}>
+              Home
+            </Navlink>
+            <Navlink onClick={() => setIsOpen(!isOpen)} to="/Shop">
+              Shop
+            </Navlink>
+            <Navlink onClick={() => setIsOpen(!isOpen)} to="/Order">
+              Orders
+            </Navlink>
+            <Navlink onClick={() => setIsOpen(!isOpen)} to="/Contact">
+              Contact
+            </Navlink>
             {currentUser ? (
               <Button text="Logout" small onClick={() => dispatch(logout())} />
-            
             ) : (
               <div
                 style={{
@@ -203,24 +234,23 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
                   gap: "12px",
                 }}
               >
-                <Button
+                {/* <Button
                   text="Sign Up"
                   outlined
                   small
                   onClick={() => setOpenAuth(!openAuth)}
-                />
+                /> */}
                 <Button
                   text="Sign In"
                   small
                   onClick={() => setOpenAuth(!openAuth)}
                 />
               </div>
-            )
-            }
+            )}
           </MobileMenu>
         )}
 
-        <Mobileicons >
+        <Mobileicons>
           <Navlink to="/search">
             <SearchRounded sx={{ color: "inherit", fontSize: "30px" }} />
           </Navlink>
@@ -233,21 +263,34 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
                 </Badge>
               </Navlink>
               <Navlink to="/cart">
-              <Badge badgeContent={cartLength} color="primary">
+                <Badge badgeContent={cartLength} color="primary">
                   <ShoppingCartOutlined
                     sx={{ color: "inherit", fontSize: "28px" }}
                   />
                 </Badge>
               </Navlink>
-              <Avatar
-                src={currentUser?.img}
-                sx={{
-                  color: "inherit",
-                  fontSize: "28px",
-                }}
-              >
-                {currentUser?.name[0]}
-              </Avatar>
+              <AvatarContainer>
+              <Avatar src={currentUser?.photo || undefined}  // Only use the photo if it's present
+               sx={{ color: "inherit",
+                fontSize: "28px", // Font size for the fallback letter
+                width: "70px", // Adjust the width for the avatar
+                height: "70px", // Adjust the height for the avatar
+                cursor: "pointer", }}
+               onClick={handleAvatarClick}
+                   >
+             {currentUser?.photo ? null : currentUser?.name[0]}  {/* Show first letter if photo is not available */}
+  </Avatar>
+                <DropdownMenu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  <MenuItem onClick={handleUpdateProfile}>
+                    Update Profile
+                  </MenuItem>
+                </DropdownMenu>
+              </AvatarContainer>
             </>
           ) : (
             <Button
@@ -258,7 +301,7 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
           )}
         </Mobileicons>
 
-        <ButtonContainer style={{width:"20%"}}>
+        <ButtonContainer style={{ width: "20%" }}>
           <Navlink to="/search">
             <SearchRounded sx={{ color: "inherit", fontSize: "30px" }} />
           </Navlink>
@@ -266,34 +309,45 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
           {currentUser ? (
             <>
               <Navlink to="/favorite">
-              <Badge badgeContent={favoriteLength} color="error">
+                <Badge badgeContent={favoriteLength} color="error">
                   <FavoriteBorder sx={{ color: "inherit", fontSize: "28px" }} />
                 </Badge>
               </Navlink>
               <Navlink to="/cart">
-              <Badge badgeContent={cartLength} color="primary">
+                <Badge badgeContent={cartLength} color="primary">
                   <ShoppingCartOutlined
                     sx={{ color: "inherit", fontSize: "28px" }}
                   />
                 </Badge>
               </Navlink>
-              <Avatar
-                src={currentUser?.img}
-                sx={{
-                  color: "inherit",
-                  fontSize: "28px",
-                }}
-              >
-                {currentUser?.name[0]}
-              </Avatar>
-              <TextButton onClick={() => dispatch(logout())}>Logout</TextButton>
+              <AvatarContainer>
+              <Avatar src={currentUser?.photo || undefined}  // Only use the photo if it's present
+               sx={{ color: "inherit",
+                fontSize: "28px", // Font size for the fallback letter
+                width: "70px", // Adjust the width for the avatar
+                height: "70px", // Adjust the height for the avatar
+                cursor: "pointer", }}
+               onClick={handleAvatarClick}
+                   >
+             {currentUser?.photo ? null : currentUser?.name[0]}  {/* Show first letter if photo is not available */}
+  </Avatar>
+                {/* <Button text="Logout" small onClick={handleLogout} /> */}
+              </AvatarContainer>
             </>
           ) : (
-            <Button
-              text="SignIn"
-              small
-              onClick={() => setOpenAuth(!openAuth)}
-            />
+            <>
+              {/* <Button
+                text="SignUp"
+                outlined
+                small
+                onClick={() => setOpenAuth(!openAuth)}
+              /> */}
+              <Button
+                text="SignIn"
+                small
+                onClick={() => setOpenAuth(!openAuth)}
+              />
+            </>
           )}
         </ButtonContainer>
       </NavbarContainer>

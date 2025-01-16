@@ -29,6 +29,7 @@ import HomeSlider from "./components/HomePageSlider";
 import AddSubCategory from "./pages/AddSubCategory";
 import EnquiriesPage from "./pages/EnquiryGet";
 import EditPage from "./pages/addressEdit";
+import ProfileUpdate from "./components/profileUpdate";
 
 
 // Styled Components
@@ -114,7 +115,7 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/shop/:id" element={<ProductDetails />} />
           <Route path="/contact" element={<ContactUsPage />} />
           <Route path="/order" element={<UserOrdersPage />} />
-          {/* <Route path="/slider" element={<HomeSlider />} /> */}
+          <Route path="/userUpdate" element={<ProfileUpdate currentUser={currentUser}/>} />
           
 
           {/* Admin Routes */}
