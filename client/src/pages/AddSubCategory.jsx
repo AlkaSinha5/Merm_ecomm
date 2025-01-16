@@ -238,8 +238,8 @@ const AddSubCategory = () => {
     }
   };
 
-  const handleAddSubCategory = async () => {
-    const { name, img, categoryId } = subCategory;
+  const handleAddOrUpdateSubCategory = async () => {
+    const { name, img, categoryId, id } = subCategory;
 
     if (!name || !img || !categoryId) {
       setError("All fields are required!");
@@ -250,33 +250,38 @@ const AddSubCategory = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/subcategory/add", {
-        name,
-        img,
-        categoryId,
-      });
-      console.log("SubCategory added successfully:", response.data);
+      if (id) {
+        // If an ID is present, update the existing subcategory
+        const response = await axios.put(`http://localhost:8080/api/subcategory/update/${id}`, { name, img, categoryId });
+        // Update the subcategory list with the updated subcategory
+        setSubCategories((prevSubCategories) =>
+          prevSubCategories.map((subCat) =>
+            subCat._id === id ? { ...subCat, name, img, categoryId } : subCat
+          )
+        );
+      } else {
+        // Add a new subcategory
+        const response = await axios.post("http://localhost:8080/api/subcategory/add", { name, img, categoryId });
+        // Add the new subcategory to the subcategories list
+        setSubCategories((prevSubCategories) => [...prevSubCategories, response.data.subCategory]);
+      }
 
-      // Add the new subcategory to the list
-      setSubCategories((prevSubCategories) => [
-        ...prevSubCategories,
-        response.data.SubCategory,
-      ]);
-
-      setSubCategory({ name: "", img: "", categoryId: "" });
+      setSubCategory({ name: "", img: "", categoryId: "", id: null }); // Clear the form
     } catch (err) {
-      setError("Failed to add SubCategory. Please try again.");
+      setError("Failed to add or update subcategory. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteSubCategory = async (id) => {
+    // Show confirmation before deletion
+    const confirmed = window.confirm("Are you sure you want to delete this subcategory?");
+    if (!confirmed) return; // Abort deletion if not confirmed
+
     try {
-      await axios.delete(`http://localhost:8080/api/subcategory/${id}`);
-      setSubCategories((prevSubCategories) =>
-        prevSubCategories.filter((subCat) => subCat._id !== id)
-      );
+      await axios.delete(`http://localhost:8080/api/subcategory/delete/${id}`);
+      setSubCategories((prevSubCategories) => prevSubCategories.filter((subCat) => subCat._id !== id));
       alert("SubCategory deleted successfully.");
     } catch (err) {
       setError("Failed to delete subcategory. Please try again.");
@@ -289,15 +294,16 @@ const AddSubCategory = () => {
       name: subCategoryToEdit.name,
       img: subCategoryToEdit.img,
       categoryId: subCategoryToEdit.categoryId,
+      id: subCategoryToEdit._id, // Store the subcategory ID
     });
   };
-
   return (
     <Container>
       <Sidebar />
       <MainContent>
         <Card>
-          <Title>Add SubCategory</Title>
+          {/* <Title>Add SubCategory</Title> */}
+          <Title>{subCategory.id ? "Edit SubCategory" : "Add SubCategory"}</Title>
           <FlexContainer>
             {/* Name Input Container */}
             <FormGroup>
@@ -352,9 +358,12 @@ const AddSubCategory = () => {
 
           {error && <ErrorText>{error}</ErrorText>}
 
-          <Button onClick={handleAddSubCategory} disabled={loading}>
-            {loading ? "Adding..." : "Submit"}
-          </Button>
+            <Button
+              onClick={handleAddOrUpdateSubCategory}
+              disabled={loading}
+            >
+              {subCategory.id ? "Update" : "Submit"}
+            </Button>
         </Card>
 
         <SubCategoryList>

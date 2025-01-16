@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { FaFacebookF, FaTwitter, FaYoutube, FaInstagram, FaLinkedin } from "react-icons/fa";
 import LogoImg from "../utils/Images/Logo.png";
 
 const FooterContainer = styled.footer`
@@ -91,7 +92,7 @@ const SocialIcons = styled.div`
     text-decoration: none;
 
     &:hover {
-      color: #fff;
+      color: #008000;
     }
   }
 `;
@@ -162,11 +163,21 @@ const Footer = () => {
           <p>Phone: {footerData.mobile}</p>
           <p>Address: {footerData.address}</p>
           <SocialIcons>
-            <a href={footerData.facebookLink}>🌐</a>
-            <a href={footerData.twitterLink}>🌐</a>
-            <a href={footerData.youtubeLink}>🌐</a>
-            <a href={footerData.instagramLink}>🌐</a>
-            <a href={footerData.linkedinLink}>🌐</a>
+            <a href={footerData.facebookLink} target="_blank" rel="noopener noreferrer" title="Facebook">
+              <FaFacebookF />
+            </a>
+            <a href={footerData.twitterLink} target="_blank" rel="noopener noreferrer" title="Twitter">
+              <FaTwitter />
+            </a>
+            <a href={footerData.youtubeLink} target="_blank" rel="noopener noreferrer" title="YouTube">
+              <FaYoutube />
+            </a>
+            <a href={footerData.instagramLink} target="_blank" rel="noopener noreferrer" title="Instagram">
+              <FaInstagram />
+            </a>
+            <a href={footerData.linkedinLink} target="_blank" rel="noopener noreferrer" title="LinkedIn">
+              <FaLinkedin />
+            </a>
           </SocialIcons>
         </ContactSection>
       </FooterContent>

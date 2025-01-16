@@ -10,20 +10,17 @@ const PageContainer = styled.div`
 
 const ContentWrapper = styled.div`
   flex-grow: 1;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 40px auto;
   padding: 40px;
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 `;
 
 const Form = styled.form`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 `;
 
@@ -57,9 +54,15 @@ const Input = styled.input`
   }
 `;
 
+const ButtonWrapper = styled.div`
+  grid-column: span 3;
+  display: flex;
+  justify-content: center;
+`;
+
 const Button = styled.button`
   padding: 14px 20px;
-  background-color: #4caf50;
+  background-color: #4a3f46;
   color: white;
   font-size: 1rem;
   font-weight: bold;
@@ -83,16 +86,19 @@ const ErrorMessage = styled.p`
   color: #d32f2f;
   font-size: 0.9rem;
   margin-top: -10px;
+  grid-column: span 3;
 `;
 
 const SuccessMessage = styled.p`
   color: #388e3c;
   font-size: 0.9rem;
   margin-top: -10px;
+  grid-column: span 3;
 `;
 
 const EditPage = () => {
   const [formData, setFormData] = useState({
+    _id: "",
     mobile: "",
     about: "",
     email: "",
@@ -113,7 +119,9 @@ const EditPage = () => {
         const response = await fetch("http://localhost:8080/api/address");
         const data = await response.json();
         if (data && data.length > 0) {
-          setFormData(data[0]); // Assuming the first object contains the data
+          setFormData(data[0]); // Assuming only one address exists
+        } else {
+          setErrorMessage("No address data found.");
         }
       } catch (error) {
         setErrorMessage("Failed to fetch data. Please try again later.");
@@ -134,7 +142,12 @@ const EditPage = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("http://localhost:8080/api/address", {
+      if (!formData._id) {
+        setErrorMessage("Address ID is missing. Cannot update data.");
+        return;
+      }
+
+      const response = await fetch(`http://localhost:8080/api/address/update/${formData._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +169,7 @@ const EditPage = () => {
     <PageContainer>
       <Sidebar />
       <ContentWrapper>
-        <h2>Edit Details</h2>
+        <h2>Edit Address</h2>
         <Form onSubmit={handleSubmit}>
           <FormGroup>
             <Label htmlFor="mobile">Mobile</Label>
@@ -250,7 +263,9 @@ const EditPage = () => {
           </FormGroup>
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
           {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
-          <Button type="submit">Update</Button>
+          <ButtonWrapper>
+            <Button type="submit">Update</Button>
+          </ButtonWrapper>
         </Form>
       </ContentWrapper>
     </PageContainer>

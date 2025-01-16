@@ -105,6 +105,7 @@ const Button = styled.button`
 
   &.edit {
     background-color: #f0ad4e;
+    margin-right:10px;
     &:hover {
       background-color: #ec971f;
     }
@@ -155,6 +156,7 @@ const AddCategory = () => {
   const [category, setCategory] = useState({
     name: "",
     img: "",
+    id: null,
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -199,8 +201,8 @@ const AddCategory = () => {
     }
   };
 
-  const handleAddCategory = async () => {
-    const { name, img } = category;
+  const handleAddOrUpdateCategory = async () => {
+    const { name, img, id } = category;
 
     if (!name || !img) {
       setError("All fields are required!");
@@ -211,29 +213,41 @@ const AddCategory = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/category/add", {
-        name,
-        img,
-      });
-      console.log("Category added successfully:", response.data);
+      if (id) {
+        // If an ID is present, update the existing category
+        const response = await axios.put(`http://localhost:8080/api/category/update/${id}`, { name, img });
+        // console.log("Category updated successfully:", response.data);
 
-      // Add the new category to the categories list
-      setCategories((prevCategories) => [
-        ...prevCategories,
-        response.data.Category,
-      ]);
+        // Update the category list with the updated category
+        setCategories((prevCategories) =>
+          prevCategories.map((cat) =>
+            cat._id === id ? { ...cat, name, img } : cat
+          )
+        );
+      } else {
+        // Add a new category
+        const response = await axios.post("http://localhost:8080/api/category/add", { name, img });
+        // console.log("Category added successfully:", response.data);
 
-      setCategory({ name: "", img: "" });
+        // Add the new category to the categories list
+        setCategories((prevCategories) => [...prevCategories, response.data.Category]);
+      }
+
+      setCategory({ name: "", img: "", id: null }); // Clear the form
     } catch (err) {
-      setError("Failed to add Category. Please try again.");
+      setError("Failed to add or update category. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteCategory = async (id) => {
+    // Show confirmation before deletion
+    const confirmed = window.confirm("Are you sure you want to delete this category?");
+    if (!confirmed) return; // Abort deletion if not confirmed
+
     try {
-      await axios.delete(`http://localhost:8080/api/category/${id}`);
+      await axios.delete(`http://localhost:8080/api/category/delete/${id}`);
       setCategories((prevCategories) => prevCategories.filter((cat) => cat._id !== id));
       alert("Category deleted successfully.");
     } catch (err) {
@@ -246,6 +260,7 @@ const AddCategory = () => {
     setCategory({
       name: categoryToEdit.name,
       img: categoryToEdit.img,
+      id: categoryToEdit._id, // Store the category ID
     });
   };
 
@@ -254,7 +269,7 @@ const AddCategory = () => {
       <Sidebar />
       <MainContent>
         <Card>
-          <Title>Add Category</Title>
+          <Title>{category.id ? "Edit Category" : "Add Category"}</Title>
           <FlexContainer>
             {/* Name Input Container */}
             <FormGroup>
@@ -290,8 +305,8 @@ const AddCategory = () => {
 
           {error && <ErrorText>{error}</ErrorText>}
 
-          <Button onClick={handleAddCategory} disabled={loading}>
-            {loading ? "Adding..." : "Submit"}
+          <Button onClick={handleAddOrUpdateCategory} disabled={loading}>
+            {loading ? "Processing..." : category.id ? "Update" : "Submit"}
           </Button>
         </Card>
 
@@ -307,29 +322,27 @@ const AddCategory = () => {
               </tr>
             </thead>
             <tbody>
-              {categories.length === 0 ? (
-                <tr>
-                  <TableData colSpan="4">No categories available.</TableData>
-                </tr>
-              ) : (
-                categories.map((cat, index) => (
-                  <TableRow key={cat._id}>
-                    <TableData>{index + 1}</TableData>
-                    <TableData>{cat.name}</TableData>
-                    <TableData>
-                      <img src={cat.img} alt={cat.name} width="50" height="50" />
-                    </TableData>
-                    <TableData>
-                      <Button className="edit" onClick={() => handleEditCategory(cat._id)}>
-                        Edit
-                      </Button>
-                      <Button className="delete" onClick={() => handleDeleteCategory(cat._id)} style={{ marginLeft: "10px" }}>
-                        Delete
-                      </Button>
-                    </TableData>
-                  </TableRow>
-                ))
-              )}
+              {categories.map((category, index) => (
+                <TableRow key={category._id}>
+                  <TableData>{index + 1}</TableData>
+                  <TableData>{category.name}</TableData>
+                  <TableData>
+                    <img
+                      src={category.img}
+                      alt={category.name}
+                      style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                    />
+                  </TableData>
+                  <TableData>
+                    <Button className="edit" onClick={() => handleEditCategory(category._id)}>
+                      Edit
+                    </Button>
+                    <Button className="delete" onClick={() => handleDeleteCategory(category._id)}>
+                      Delete
+                    </Button>
+                  </TableData>
+                </TableRow>
+              ))}
             </tbody>
           </Table>
         </CategoryList>

@@ -15,7 +15,7 @@ const SliderContainer = styled.div`
 
 const SliderImage = styled.img`
   width: 100%;
-  height: 500px; /* Adjust height as needed */
+  height: 350px; /* Adjust height as needed */
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
