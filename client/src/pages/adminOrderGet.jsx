@@ -3,23 +3,21 @@ import axios from "axios";
 import styled from "styled-components";
 import Sidebar from "../components/SideBar";
 
-// Main container with sidebar and admin content
+// Styled components for layout and design
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
   background-color: #f9f9f9;
 `;
 
-// Sidebar container styling
 const SidebarContainer = styled.div`
-  width: 250px;
-  background-color:#4a3f46;
+  width: 280px;
+  background-color: #4a3f46;
   color: #fff;
   min-height: 100vh;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 `;
 
-// Admin orders content container
 const ContainerAdmin = styled.div`
   flex: 1;
   padding: 30px;
@@ -30,7 +28,6 @@ const ContainerAdmin = styled.div`
   overflow-y: auto;
 `;
 
-// Heading styling
 const Heading = styled.h1`
   margin-bottom: 30px;
   font-size: 28px;
@@ -41,7 +38,27 @@ const Heading = styled.h1`
   padding-bottom: 10px;
 `;
 
-// Table container for scrollable content
+const FilterContainer = styled.div`
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+`;
+
+const FilterButton = styled.button`
+  padding: 10px 20px;
+  background-color: ${({ active }) => (active ? "#4a3f46" : "#ddd")};
+  color: ${({ active }) => (active ? "#fff" : "#333")};
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
 const TableWrapper = styled.div`
   width: 100%;
   max-width: 1200px;
@@ -53,7 +70,6 @@ const TableWrapper = styled.div`
   padding: 15px;
 `;
 
-// Table styling
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -93,7 +109,6 @@ const TableBody = styled.tbody`
   }
 `;
 
-// Product list inside each order
 const ProductsList = styled.ul`
   list-style: none;
   padding: 0;
@@ -106,14 +121,12 @@ const ProductsList = styled.ul`
   }
 `;
 
-// Loading or no orders message
 const Message = styled.p`
   font-size: 18px;
   color: #666;
   text-align: center;
 `;
 
-// Style for Yes/No text for status
 const StatusText = styled.span`
   background-color: ${({ status }) => (status === "Yes" ? "#2ecc71" : "#e74c3c")};
   color: white;
@@ -127,14 +140,14 @@ const StatusText = styled.span`
   }
 `;
 
-// AdminOrdersPage Component
+// Main AdminOrdersPage Component
 const AdminOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [productDetails, setProductDetails] = useState({});
+  const [filter, setFilter] = useState("all"); // Filter state: all, pending, delivered
 
   useEffect(() => {
-    // Fetch orders on component mount
     const fetchOrders = async () => {
       try {
         const response = await axios.get("http://localhost:8080/api/user/orderAdmin", {
@@ -151,14 +164,13 @@ const AdminOrdersPage = () => {
     fetchOrders();
   }, []);
 
-  // Fetch product details by productId
   const fetchProductDetails = async (productId) => {
-    if (productDetails[productId]) return; // Avoid duplicate requests for the same productId
+    if (productDetails[productId]) return;
     try {
       const response = await axios.get(`http://localhost:8080/api/products/${productId}`);
       setProductDetails((prevDetails) => ({
         ...prevDetails,
-        [productId]: response.data, // Store the product details by productId
+        [productId]: response.data,
       }));
     } catch (error) {
       console.error("Error fetching product details:", error);
@@ -190,35 +202,55 @@ const AdminOrdersPage = () => {
   };
 
   const handleStatusChange = (orderId, statusType, currentStatus) => {
-    // Confirmation dialog before changing the status
     const confirmChange = window.confirm("Are you sure you want to update the status?");
-    
     if (confirmChange) {
-      const newStatus = !currentStatus; // Toggle the current status
-      updateOrderStatus(orderId, statusType, newStatus); // Update the status in the backend
+      const newStatus = !currentStatus;
+      updateOrderStatus(orderId, statusType, newStatus);
     }
   };
 
+  // Filtered orders based on the selected filter
+  const filteredOrders = orders.filter((order) => {
+    if (filter === "pending") return !order.orderDeliverd;
+    if (filter === "delivered") return order.orderDeliverd;
+    return true;
+  });
+  const allCount = orders.length;
+  const pendingCount = orders.filter((order) => !order.orderDeliverd).length;
+  const deliveredCount = orders.filter((order) => order.orderDeliverd).length;
   if (loading) {
     return <Container>Loading...</Container>;
   }
 
   return (
     <Container>
-      {/* Sidebar */}
       <SidebarContainer>
         <Sidebar />
       </SidebarContainer>
 
-      {/* Admin Orders Content */}
       <ContainerAdmin>
-        {orders.length === 0 ? (
+        <Heading>Admin Orders</Heading>
+
+        <FilterContainer>
+          <FilterButton active={filter === "all"} onClick={() => setFilter("all")}>
+            All Orders ({allCount})
+          </FilterButton>
+          <FilterButton active={filter === "pending"} onClick={() => setFilter("pending")}>
+            Pending ({pendingCount})
+          </FilterButton>
+          <FilterButton active={filter === "delivered"} onClick={() => setFilter("delivered")}>
+            Delivered ({deliveredCount})
+          </FilterButton>
+        </FilterContainer>
+
+        {filteredOrders.length === 0 ? (
           <Message>No orders found.</Message>
         ) : (
           <TableWrapper>
             <Table>
               <TableHead>
                 <tr>
+                <th>Sl. No.</th>
                   <th>Total Amount</th>
                   <th>Address</th>
                   <th>Status</th>
@@ -231,8 +263,9 @@ const AdminOrdersPage = () => {
                 </tr>
               </TableHead>
               <TableBody>
-                {orders.map((order) => (
+                {filteredOrders.map((order,index) => (
                   <tr key={order._id}>
+                    <td>{index+1}</td>
                     <td>{order.total_amount.$numberDecimal}</td>
                     <td>{order.address}</td>
                     <td>{order.status}</td>
@@ -278,7 +311,7 @@ const AdminOrdersPage = () => {
                     </td>
                     <td>
                       <ProductsList>
-                        {order.products.map((item) => {
+                      {order.products.map((item) => {
                           fetchProductDetails(item.product); // Fetch product details dynamically
                           return (
                             

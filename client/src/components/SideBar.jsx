@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
@@ -21,11 +21,10 @@ const SidebarLink = styled(Link)`
   transition: background 0.3s ease;
   display: block;
 
-  /* Apply highlight for active link */
   &.active {
-    background: #333; /* Highlight active link */
-    font-weight: bold; /* Add bold text for active state */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add a soft shadow effect */
+    background: #333;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   }
 
   &:hover {
@@ -69,26 +68,14 @@ const Sidebar = () => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isInformationsOpen, setIsInformationsOpen] = useState(false);
 
-  // Automatically open the correct submenu based on the current path
-  useEffect(() => {
-    // If the current path matches a route inside the Products submenu
-    if (
-      location.pathname.includes("/admin/category") ||
-      location.pathname.includes("/admin/subcategory") ||
-      location.pathname.includes("/admin/products")
-    ) {
-      setIsProductsOpen(true);
-    } else {
-      setIsProductsOpen(false);
-    }
+  // Check if the submenu should be open based on the current path
+  const isProductsPath = location.pathname.startsWith("/admin/category") ||
+    location.pathname.startsWith("/admin/subcategory") ||
+    location.pathname.startsWith("/admin/products");
 
-    // If the current path matches a route inside the Informations submenu
-    if (location.pathname.includes("/admin/slidder")) {
-      setIsInformationsOpen(true);
-    } else {
-      setIsInformationsOpen(false);
-    }
-  }, [location.pathname]); // Re-run whenever the path changes
+  const isInformationsPath = location.pathname.startsWith("/admin/slidder") ||
+    location.pathname.startsWith("/admin/enquiry") ||
+    location.pathname.startsWith("/admin/address");
 
   return (
     <SidebarContainer>
@@ -112,7 +99,7 @@ const Sidebar = () => {
           Products
           <span>{isProductsOpen ? "▲" : "▼"}</span>
         </MainLink>
-        <SubLinks isVisible={isProductsOpen}>
+        <SubLinks isVisible={isProductsOpen || isProductsPath}>
           <SubLink
             to="/admin/category"
             className={location.pathname === "/admin/category" ? "active" : ""}
@@ -131,6 +118,12 @@ const Sidebar = () => {
           >
             Add Product
           </SubLink>
+          <SubLink
+            to="/admin/products/list"
+            className={location.pathname === "/admin/products/list" ? "active" : ""}
+          >
+            Product List
+          </SubLink>
         </SubLinks>
       </SidebarItem>
 
@@ -140,7 +133,7 @@ const Sidebar = () => {
           Informations
           <span>{isInformationsOpen ? "▲" : "▼"}</span>
         </MainLink>
-        <SubLinks isVisible={isInformationsOpen}>
+        <SubLinks isVisible={isInformationsOpen || isInformationsPath}>
           <SubLink
             to="/admin/slidder"
             className={location.pathname === "/admin/slidder" ? "active" : ""}

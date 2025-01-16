@@ -76,3 +76,29 @@ export const getSliders = async (req, res, next) => {
       return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
+
+export const deleteSlider = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    // Find the slider in the database
+    const slider = await Slider.findById(id);
+
+    if (!slider) {
+      return res.status(404).json({ message: "Slider not found" });
+    }
+
+    // Extract the public ID of the image from the Cloudinary URL
+    const publicId = slider.img.split("/").pop().split(".")[0];
+
+    // Delete the image from Cloudinary
+    await cloudinary.uploader.destroy(publicId);
+
+    // Delete the slider from the database
+    await Slider.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: "Slider deleted successfully" });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error", error: err.message });
+  }
+};

@@ -135,6 +135,7 @@ const ImageGrid = styled.div`
 `;
 
 const ImageItem = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -148,6 +149,23 @@ const ImageItem = styled.div`
     height: 200px; /* Adjust the image size */
     object-fit: cover;
     border-radius: 8px;
+  }
+
+  button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #d9534f;
+    border-radius: 50%;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #c9302c;
+    }
   }
 `;
 
@@ -245,7 +263,18 @@ const AddSlider = () => {
     }
   };
 
- 
+  const handleDeleteSlider = async (id) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this slider?");
+    if (!isConfirmed) return; // Abort if not confirmed
+
+    try {
+      await axios.delete(`http://localhost:8080/api/slider/delete/${id}`);
+      setSliders((prevSliders) => prevSliders.filter(slider => slider._id !== id));
+      alert("Slider deleted successfully!");
+    } catch (err) {
+      alert("Failed to delete slider. Please try again.");
+    }
+  };
 
   return (
     <Container>
@@ -287,7 +316,12 @@ const AddSlider = () => {
             ) : (
               sliders.map((slider) => (
                 <ImageItem key={slider._id}>
-                  <img src={slider.img} alt={slider.name} />
+                  <img src={slider.img} alt="Slider" />
+                  <button
+                    onClick={() => handleDeleteSlider(slider._id)}
+                  >
+                    X
+                  </button>
                 </ImageItem>
               ))
             )}

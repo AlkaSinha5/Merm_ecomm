@@ -99,7 +99,7 @@ export default App;
 function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
   const location = useLocation(); // Use location to check current path
   const isAdminRoute = location.pathname.startsWith("/admin"); // Identify admin routes
-
+  const isDiffRoute = location.pathname.startsWith("/user");
   return (
     <>
       {/* Render Navbar only for non-admin routes */}
@@ -115,7 +115,8 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/shop/:id" element={<ProductDetails />} />
           <Route path="/contact" element={<ContactUsPage />} />
           <Route path="/order" element={<UserOrdersPage />} />
-          <Route path="/userUpdate" element={<ProfileUpdate currentUser={currentUser}/>} />
+
+          <Route path="/user/userUpdate" element={<ProfileUpdate currentUser={currentUser}/>} />
           
 
           {/* Admin Routes */}
@@ -134,7 +135,7 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
       </MainContent>
 
       {/* Render Footer only for non-admin routes */}
-      {!isAdminRoute && (
+      { !isDiffRoute && !isAdminRoute && (
         <FooterStyled>
           <Footer />
         </FooterStyled>

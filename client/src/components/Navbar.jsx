@@ -188,7 +188,7 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
     setAnchorEl(null);
   };
   const handleUpdateProfile = () => {
-    navigate("/userUpdate"); // Redirect to Update Profile page
+    navigate("/user/userUpdate"); // Redirect to Update Profile page
     handleClose(); // Close the dropdown menu
   };
 
@@ -273,8 +273,8 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
               <Avatar src={currentUser?.photo || undefined}  // Only use the photo if it's present
                sx={{ color: "inherit",
                 fontSize: "28px", // Font size for the fallback letter
-                width: "70px", // Adjust the width for the avatar
-                height: "70px", // Adjust the height for the avatar
+                width: "40px", // Adjust the width for the avatar
+                height: "40px", // Adjust the height for the avatar
                 cursor: "pointer", }}
                onClick={handleAvatarClick}
                    >
@@ -324,8 +324,8 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
               <Avatar src={currentUser?.photo || undefined}  // Only use the photo if it's present
                sx={{ color: "inherit",
                 fontSize: "28px", // Font size for the fallback letter
-                width: "70px", // Adjust the width for the avatar
-                height: "70px", // Adjust the height for the avatar
+                width: "60px", // Adjust the width for the avatar
+                height: "60px", // Adjust the height for the avatar
                 cursor: "pointer", }}
                onClick={handleAvatarClick}
                    >

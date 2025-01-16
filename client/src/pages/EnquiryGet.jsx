@@ -104,6 +104,7 @@ const EnquiriesPage = () => {
           <Table>
             <thead>
               <tr>
+              <TableHeader>Sl. No</TableHeader>
                 <TableHeader>Name</TableHeader>
                 <TableHeader>Email</TableHeader>
                 <TableHeader>Message</TableHeader>
@@ -116,8 +117,9 @@ const EnquiriesPage = () => {
                   <TableData colSpan="4">No enquiries available.</TableData>
                 </tr>
               ) : (
-                enquiries.map((enquiry) => (
+                enquiries.map((enquiry,index) => (
                   <TableRow key={enquiry._id}>
+                    <TableData>{index+1}</TableData>
                     <TableData>{enquiry.name}</TableData>
                     <TableData>{enquiry.email}</TableData>
                     <TableData>{enquiry.message}</TableData>
