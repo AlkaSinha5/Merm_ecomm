@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import Sidebar from "../components/SideBar";
 
-// Styled Components for Sidebar and Layout
+// Styled components (same as before, no changes here)
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
@@ -16,7 +15,6 @@ const MainContent = styled.div`
   background-color: #f4f4f4;
 `;
 
-// Styled Input and Textarea with margin
 const Input = styled.input`
   padding: 12px;
   font-size: 1rem;
@@ -25,7 +23,7 @@ const Input = styled.input`
   width: 100%;
   background-color: #fff;
   box-sizing: border-box;
-  margin-bottom: 15px;  // Margin added for spacing between fields
+  margin-bottom: 15px;
 
   &:focus {
     border-color: #007bff;
@@ -42,7 +40,22 @@ const Textarea = styled.textarea`
   height: 71px;
   resize: none;
   background-color: #fff;
-  margin-bottom: 15px;  // Margin added for spacing between fields
+  margin-bottom: 15px;
+
+  &:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+`;
+
+const Select = styled.select`
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  background-color: #fff;
+  margin-bottom: 15px;
 
   &:focus {
     border-color: #007bff;
@@ -57,7 +70,6 @@ const FormWrapper = styled.div`
   padding: 20px;
 `;
 
-// Styled Button
 const Button = styled.button`
   background-color: #007bff;
   color: white;
@@ -104,25 +116,58 @@ const AddProduct = () => {
     desc: "",
     img: "",
     price: { org: "", mrp: "", off: "" },
-    sizes: [],
-    category: [],
+    sizes: "",
+    category: "",
+    subcategory: "",
     quantity: "",
   });
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/category");
+        setCategories(response.data.categories);
+      } catch {
+        setError("Failed to load categories.");
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Fetch subcategories when category changes
+  useEffect(() => {
+    const fetchSubcategories = async () => {
+      if (product.category) {
+        console.log(product.category)
+        try {
+          const response = await axios.get(`http://localhost:8080/api/subcategory/${product.category}`);
+          console.log(response)
+          setSubcategories(response.data.data);
+        } catch {
+          setError("Failed to load subcategories.");
+        }
+      }
+    };
+    fetchSubcategories();
+  }, [product.category]);
+
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, dataset } = e.target;
 
     if (name === "price") {
       setProduct((prev) => ({
         ...prev,
-        price: { ...prev.price, [e.target.dataset.field]: value },
+        price: { ...prev.price, [dataset.field]: value },
       }));
-    } else if (name === "sizes" || name === "category") {
+    } else if (name === "sizes") {
       setProduct((prev) => ({
         ...prev,
-        [name]: value.split(",").map((item) => item.trim()), // Convert to array of strings
+        sizes: value,
       }));
     } else {
       setProduct((prev) => ({
@@ -134,28 +179,25 @@ const AddProduct = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
-    // Ensure only image files are allowed
     if (file && file.type.startsWith("image/")) {
-      // Convert the image to base64 string
       const reader = new FileReader();
       reader.onloadend = () => {
         setProduct((prev) => ({
           ...prev,
-          img: reader.result, // This will be the base64 encoded image string
+          img: reader.result,
         }));
       };
-
-      reader.readAsDataURL(file); // This will trigger the `onloadend` event
+      reader.readAsDataURL(file);
     } else {
       setError("Please upload a valid image file.");
     }
   };
 
   const handleAddProduct = async () => {
-    const { title, name, desc, img, price, quantity, sizes, category } = product;
+    const { title, name, desc, img, price, quantity, sizes, category, subcategory } = product;
 
-    if (!title || !name || !desc || !img || !price.org || !quantity) {
+    // Validate required fields
+    if (!title || !name || !desc || !img || !price.org || !quantity || !sizes || !category || !subcategory) {
       setError("All fields are required!");
       return;
     }
@@ -163,36 +205,31 @@ const AddProduct = () => {
     setError(null);
     setLoading(true);
 
-    // Prepare the data to send, including the base64 image
-    const productData = {
-      title,
-      name,
-      desc,
-      img, // The img is now a base64 string
-      price,
-      quantity,
-      sizes: JSON.stringify(sizes),
-      category: JSON.stringify(category),
-    };
-
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/products/add",
-        productData
-      );
+      const response = await axios.post("http://localhost:8080/api/products/add", {
+        title,
+        name,
+        desc,
+        img,
+        price,
+        quantity,
+        sizes: sizes.split(",").map((s) => s.trim()),
+        category,
+        subcategory,
+      });
       console.log("Product added successfully:", response.data);
-      // Handle success (e.g., reset form, navigate to another page)
       setProduct({
         title: "",
         name: "",
         desc: "",
         img: "",
         price: { org: "", mrp: "", off: "" },
-        sizes: [],
-        category: [],
+        sizes: "",
+        category: "",
+        subcategory: "",
         quantity: "",
       });
-    } catch (error) {
+    } catch {
       setError("Failed to add product. Please try again.");
     } finally {
       setLoading(false);
@@ -201,92 +238,43 @@ const AddProduct = () => {
 
   return (
     <Container>
-      {/* Sidebar */}
       <Sidebar />
-
-      {/* Main Content */}
       <MainContent>
         <h2>Add New Product</h2>
         <FormWrapper>
           <div>
-            <Input
-              type="text"
-              name="title"
-              value={product.title}
-              onChange={handleInputChange}
-              placeholder="Product Title"
-            />
-            <Input
-              type="text"
-              name="name"
-              value={product.name}
-              onChange={handleInputChange}
-              placeholder="Product Name"
-            />
-            {/* Image Upload Input */}
-            <Input
-              type="file"
-              name="img"
-              onChange={handleFileChange}
-              placeholder="Product Image"
-            />
-            {/* Image Preview */}
+            <Input type="text" name="title" value={product.title} onChange={handleInputChange} placeholder="Product Title" />
+            <Input type="text" name="name" value={product.name} onChange={handleInputChange} placeholder="Product Name" />
+            <Input type="file" name="img" onChange={handleFileChange} placeholder="Product Image" />
             {product.img && (
               <ImagePreview>
                 <img src={product.img} alt="Preview" />
               </ImagePreview>
             )}
-            <Input
-              type="number"
-              name="quantity"
-              value={product.quantity}
-              onChange={handleInputChange}
-              placeholder="Quantity"
-            />
-            <Input
-              type="number"
-              name="price"
-              data-field="org"
-              value={product.price.org}
-              onChange={handleInputChange}
-              placeholder="Original Price"
-            />
-            <Input
-              type="number"
-              name="price"
-              data-field="mrp"
-              value={product.price.mrp}
-              onChange={handleInputChange}
-              placeholder="MRP"
-            />
-            <Input
-              type="number"
-              name="price"
-              data-field="off"
-              value={product.price.off}
-              onChange={handleInputChange}
-              placeholder="Discount"
-            />
+            <Input type="number" name="quantity" value={product.quantity} onChange={handleInputChange} placeholder="Quantity" />
+            <Input type="number" name="price" data-field="org" value={product.price.org} onChange={handleInputChange} placeholder="Original Price" />
+            <Input type="number" name="price" data-field="mrp" value={product.price.mrp} onChange={handleInputChange} placeholder="MRP" />
+            <Input type="number" name="price" data-field="off" value={product.price.off} onChange={handleInputChange} placeholder="Discount" />
           </div>
           <div>
-            <Textarea
-              name="desc"
-              value={product.desc}
-              onChange={handleInputChange}
-              placeholder="Product Description"
-            />
-            <Textarea
-              name="sizes"
-              value={product.sizes.join(", ")}
-              onChange={handleInputChange}
-              placeholder="Sizes (comma separated)"
-            />
-            <Textarea
-              name="category"
-              value={product.category.join(", ")}
-              onChange={handleInputChange}
-              placeholder="Categories (comma separated)"
-            />
+            <Textarea name="desc" value={product.desc} onChange={handleInputChange} placeholder="Product Description" />
+            <Textarea name="sizes" value={product.sizes} onChange={handleInputChange} placeholder="Sizes (comma-separated)" />
+            <Select name="category" value={product.category} onChange={handleInputChange}>
+              <option value="">Select Category</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </Select>
+            <Select name="subcategory" value={product.subcategory} onChange={handleInputChange}>
+              <option value="">Select Subcategory</option>
+              {subcategories.map((subcat) => (
+                <option key={subcat._id} value={subcat._id}>
+                  {subcat.name}
+                </option>
+              ))}
+            </Select>
           </div>
         </FormWrapper>
         {error && <p style={{ color: "red" }}>{error}</p>}

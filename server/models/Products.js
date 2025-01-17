@@ -33,10 +33,20 @@ const ProductsSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    category: {
-      type: [String],
-      default: [],
-    },
+    category: [
+      {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "Category",
+        required: true,
+      },
+    ],
+    subcategory :[
+      {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "SubCategory",
+        required: true,
+      },
+    ],
   },
   { timestamps: true }
 );

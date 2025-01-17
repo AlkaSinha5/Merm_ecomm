@@ -106,4 +106,32 @@ export const deleteSubCategory = async (req, res) => {
   }
 };
 
+export const getSubCategoriesByCategoryId = async (req, res) => {
+  const { categoryId } = req.params; // Get categoryId from the URL parameter
+
+  try {
+    // Check if the category exists
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Fetch subcategories related to the given categoryId
+    const subcategories = await SubCategory.find({ categoryId });
+
+    // If no subcategories are found
+    if (subcategories.length === 0) {
+      return res.status(404).json({ message: "No subcategories found for this category" });
+    }
+
+    // Return the subcategories in the response
+    return res.status(200).json({
+      message: "Subcategories retrieved successfully",
+      data: subcategories,
+    });
+  } catch (error) {
+    console.error("Error while fetching subcategories by category ID:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
 
