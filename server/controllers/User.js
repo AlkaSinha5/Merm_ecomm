@@ -89,37 +89,46 @@ export const UserLogin = async (req, res, next) => {
 
 export const UserUpdate = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { id } = req.params;
+    const { name, photo, email,password } = req.body;
 
-    let photoUrl;
-
-    // Upload photo to Cloudinary if a file is provided
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: "user_photos", // Optional: Folder in Cloudinary
-      });
-      photoUrl = result.secure_url;
+    // Validate MongoDB Object ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid User ID" });
     }
 
-    // Update user in database
+    // Find the existing category
+    const existingUser= await User.findById(id);
+
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // If a new image is provided, upload to Cloudinary
+    let updatedImageUrl = existingUser.photo;
+    if (photo) {
+      const uploadedImage = await cloudinary.uploader.upload(photo, {
+        folder: "Users", // Specify the folder in Cloudinary
+      });
+      updatedImageUrl = uploadedImage.secure_url;
+    }
+
+    let hashedPassword = existingUser.password; // Default to the current password if not updated
+    if (password) {
+      const salt = await bcrypt.genSalt(10); // Generate salt
+      hashedPassword = await bcrypt.hash(password, salt); // Hash the password
+    }
+    // Update Category fields
     const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      {
-        name,
-        email,
-        password,
-        ...(photoUrl && { photo: photoUrl }), // Only update photo if uploaded
-      },
+      id,
+      { name, email, password:hashedPassword, photo: updatedImageUrl },
       { new: true } // Return the updated document
     );
 
-    if (!updatedUser) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    res.json({ success: true, updatedUser });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(200).json({ message: "User updated successfully", user: updatedUser });
+  } catch (err) {
+    // console.error("Error while updating category:", err);
+    return res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
 
