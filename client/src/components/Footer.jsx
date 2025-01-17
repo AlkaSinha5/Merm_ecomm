@@ -88,7 +88,7 @@ const SocialIcons = styled.div`
   a {
     margin-right: 10px;
     font-size: 1.5rem;
-    color: #f9a825;
+    color: #333;
     text-decoration: none;
 
     &:hover {

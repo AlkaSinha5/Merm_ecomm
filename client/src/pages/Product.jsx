@@ -71,7 +71,7 @@ const FormWrapper = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #007bff;
+  background-color: #4a3f46;
   color: white;
   padding: 12px 20px;
   border: none;
@@ -197,7 +197,7 @@ const AddProduct = () => {
     const { title, name, desc, img, price, quantity, sizes, category, subcategory } = product;
 
     // Validate required fields
-    if (!title || !name || !desc || !img || !price.org || !quantity || !sizes || !category || !subcategory) {
+    if (!title || !name || !desc || !img || !price || !quantity || !sizes || !category || !subcategory) {
       setError("All fields are required!");
       return;
     }
@@ -251,12 +251,13 @@ const AddProduct = () => {
                 <img src={product.img} alt="Preview" />
               </ImagePreview>
             )}
-            <Input type="number" name="quantity" value={product.quantity} onChange={handleInputChange} placeholder="Quantity" />
+           
             <Input type="number" name="price" data-field="org" value={product.price.org} onChange={handleInputChange} placeholder="Original Price" />
             <Input type="number" name="price" data-field="mrp" value={product.price.mrp} onChange={handleInputChange} placeholder="MRP" />
             <Input type="number" name="price" data-field="off" value={product.price.off} onChange={handleInputChange} placeholder="Discount" />
           </div>
           <div>
+          <Input type="number" name="quantity" value={product.quantity} onChange={handleInputChange} placeholder="Quantity" />
             <Textarea name="desc" value={product.desc} onChange={handleInputChange} placeholder="Product Description" />
             <Textarea name="sizes" value={product.sizes} onChange={handleInputChange} placeholder="Sizes (comma-separated)" />
             <Select name="category" value={product.category} onChange={handleInputChange}>
