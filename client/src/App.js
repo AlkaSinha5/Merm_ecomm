@@ -30,6 +30,7 @@ import AddSubCategory from "./pages/AddSubCategory";
 import EnquiriesPage from "./pages/EnquiryGet";
 import EditPage from "./pages/addressEdit";
 import ProfileUpdate from "./components/profileUpdate";
+import AddCoupon from "./pages/AddCoupon";
 
 
 // Styled Components
@@ -131,6 +132,7 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/admin/slidder" element={<AddSlider />} />
           <Route path="/admin/enquiry" element={<EnquiriesPage />} />
           <Route path="/admin/address" element={<EditPage />} />
+          <Route path="/admin/coupon" element={<AddCoupon/>} />
         </Routes>
       </MainContent>
 

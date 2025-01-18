@@ -75,7 +75,8 @@ const Sidebar = () => {
 
   const isInformationsPath = location.pathname.startsWith("/admin/slidder") ||
     location.pathname.startsWith("/admin/enquiry") ||
-    location.pathname.startsWith("/admin/address");
+    location.pathname.startsWith("/admin/address") ||
+    location.pathname.startsWith("/admin/coupon");
 
   return (
     <SidebarContainer>
@@ -152,6 +153,13 @@ const Sidebar = () => {
           >
             Address
           </SubLink>
+          <SubLink
+            to="/admin/coupon"
+            className={location.pathname === "/admin/coupon" ? "active" : ""}
+          >
+            Coupon
+          </SubLink>
+          
         </SubLinks>
       </SidebarItem>
 
