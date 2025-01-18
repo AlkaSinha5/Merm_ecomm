@@ -66,3 +66,12 @@ export const getOrders = async (token) =>
   await API.get(`/user/order/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+  export const getCategories = async () => {
+    try {
+      const response = await API.get('/category');
+      return response;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../components/carts/ProductCard";
 import styled from "styled-components";
-import { category, filter } from "../utils/data";
+import { filter } from "../utils/data";
 import { CircularProgress, Slider } from "@mui/material";
-import { getAllProducts } from "../api";
+import { getAllProducts, getCategories } from "../api"; // Add getCategories API call
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -93,13 +93,13 @@ const SelectableItem = styled.div`
 const ShopListing = () => {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // State for categories
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [selectedSizes, setSelectedSizes] = useState(["S", "M", "L", "XL"]); // Default selected sizes
   const [selectedCategories, setSelectedCategories] = useState([]); // Default selected categories
 
   const getFilteredProductsData = async () => {
     setLoading(true);
-    // Call the API function for filtered products
     await getAllProducts(
       `minPrice=${priceRange[0]}&maxPrice=${priceRange[1]}${
         selectedSizes.length > 0 ? `&sizes=${selectedSizes.join(",")}` : ""
@@ -114,9 +114,25 @@ const ShopListing = () => {
     });
   };
 
+  // Fetch categories from the backend
+  const fetchCategories = async () => {
+    try {
+      const res = await getCategories();
+      console.log(res.data.categories)
+      setCategories(res.data.categories); // Update the categories state with the fetched data
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories(); // Fetch categories when the component mounts
+  }, []);
+
   useEffect(() => {
     getFilteredProductsData();
   }, [priceRange, selectedSizes, selectedCategories]);
+
   return (
     <Container>
       {loading ? (
@@ -125,11 +141,36 @@ const ShopListing = () => {
         <>
           <Filters>
             <Menu>
-              {filter.map((filters) => (
-                <FilterSection>
-                  <Title>{filters.name}</Title>
-                  {filters.value === "price" ? (
-                    <>
+              {/* Filter Section */}
+              <FilterSection>
+                <Title>Category</Title>
+                <Item>
+                  {categories.map((item) => (
+                    <SelectableItem
+                      key={item._id}
+                      selected={selectedCategories.includes(item._id)}
+                      onClick={() =>
+                        setSelectedCategories((prevCategories) =>
+                          prevCategories.includes(item._id)
+                            ? prevCategories.filter(
+                                (category) => category !== item._id
+                              )
+                            : [...prevCategories, item._id]
+                        )
+                      }
+                    >
+                      {item.name}
+                    </SelectableItem>
+                  ))}
+                </Item>
+              </FilterSection>
+
+              {/* Price and Size Filters */}
+              {filter.map((filters) =>
+                filters.value !== "category" ? (
+                  <FilterSection key={filters.name}>
+                    <Title>{filters.name}</Title>
+                    {filters.value === "price" ? (
                       <Slider
                         aria-label="Price"
                         defaultValue={priceRange}
@@ -142,52 +183,33 @@ const ShopListing = () => {
                         ]}
                         onChange={(e, newValue) => setPriceRange(newValue)}
                       />
-                    </>
-                  ) : filters.value === "size" ? (
-                    <Item>
-                      {filters.items.map((item) => (
-                        <SelectableItem
-                          key={item}
-                          selected={selectedSizes.includes(item)}
-                          onClick={() =>
-                            setSelectedSizes((prevSizes) =>
-                              prevSizes.includes(item)
-                                ? prevSizes.filter(
-                                    (category) => category !== item
-                                  )
-                                : [...prevSizes, item]
-                            )
-                          }
-                        >
-                          {item}
-                        </SelectableItem>
-                      ))}
-                    </Item>
-                  ) : filters.value === "category" ? (
-                    <Item>
-                      {filters.items.map((item) => (
-                        <SelectableItem
-                          key={item}
-                          selected={selectedCategories.includes(item)}
-                          onClick={() =>
-                            setSelectedCategories((prevCategories) =>
-                              prevCategories.includes(item)
-                                ? prevCategories.filter(
-                                    (category) => category !== item
-                                  )
-                                : [...prevCategories, item]
-                            )
-                          }
-                        >
-                          {item}
-                        </SelectableItem>
-                      ))}
-                    </Item>
-                  ) : null}
-                </FilterSection>
-              ))}
+                    ) : filters.value === "size" ? (
+                      <Item>
+                        {filters.items.map((item) => (
+                          <SelectableItem
+                            key={item}
+                            selected={selectedSizes.includes(item)}
+                            onClick={() =>
+                              setSelectedSizes((prevSizes) =>
+                                prevSizes.includes(item)
+                                  ? prevSizes.filter(
+                                      (category) => category !== item
+                                    )
+                                  : [...prevSizes, item]
+                              )
+                            }
+                          >
+                            {item}
+                          </SelectableItem>
+                        ))}
+                      </Item>
+                    ) : null}
+                  </FilterSection>
+                ) : null
+              )}
             </Menu>
           </Filters>
+
           <Products>
             <CardWrapper>
               {products?.map((product) => (
