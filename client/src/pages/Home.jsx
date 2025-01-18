@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import HeaderImage from "../utils/Images/Header.png";
-import { category } from "../utils/data";
+// import { category } from "../utils/data";
 import ProductCategoryCard from "../components/carts/ProductCategoryCard";
 import ProductCard from "../components/carts/ProductCard";
 // import Footer from "../components/Footer";
-import { getAllProducts } from "../api";
+import { getAllProducts, getCategories } from "../api"; 
 import HomeSlider from "../components/HomePageSlider";
 
 const Container = styled.div`
@@ -59,6 +59,7 @@ const CardWrapper = styled.div`
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]); // State for categories
 
   const getProducts = async () => {
     setLoading(true);
@@ -70,6 +71,20 @@ const Home = () => {
 
   useEffect(() => {
     getProducts();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await getCategories();
+      console.log(res.data.categories)
+      setCategories(res.data.categories); // Update the categories state with the fetched data
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories(); // Fetch categories when the component mounts
   }, []);
 
   return (
@@ -84,7 +99,7 @@ const Home = () => {
       <Section>
         <Title center>Shop by Categories</Title>
         <CardWrapper>
-          {category.map((category) => (
+          {categories.map((category) => (
             <ProductCategoryCard key={category.id} category={category} />
           ))}
         </CardWrapper>

@@ -86,7 +86,7 @@ const ProductCategoryCard = ({ category }) => {
         <Menu>
           <Button>{category.name}</Button>
         </Menu>
-        <Sale>{category.off}</Sale>
+        {/* <Sale>{category.off}</Sale> */}
       </Top>
     </Card>
   );
