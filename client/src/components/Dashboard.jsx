@@ -16,15 +16,16 @@ const MainContent = styled.div`
 `;
 
 const StatsContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3 columns */
   gap: 20px;
+  width: 100%;
 `;
 
 const StatCard = styled(Link)`
   background: ${(props) => props.color || "white"};
   padding: 20px;
   border-radius: 10px;
-  flex: 1;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-decoration: none;
@@ -38,21 +39,42 @@ const StatCard = styled(Link)`
 `;
 
 const Dashboard = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     totalProducts: 0,
     totalUsers: 0,
-    // totalProductQuantity:0
+    totalEnquiries: 0,
   });
 
-  // Fetch data from the API
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/user/orderAdmin", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("krist-app-token")}` },
+        });
+        setOrders(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const usersResponse = await axios.get("http://localhost:8080/api/user/get");
         const productsResponse = await axios.get("http://localhost:8080/api/products/");
+        const enquiriesResponse = await axios.get("http://localhost:8080/api/enquiry/");
+
         setData({
-          totalProducts: productsResponse.data.length,
-          totalUsers: usersResponse.data.count,
+          totalProducts: productsResponse.data?.length || 0,
+          totalUsers: usersResponse.data.users?.length || 0,
+          totalEnquiries: enquiriesResponse.data?.length || 0,
         });
       } catch (error) {
         console.error("Error fetching data", error);
@@ -62,28 +84,41 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  // Calculating total, pending, and delivered orders
+  const totalOrders = orders.length;
+  const pendingOrders = orders.filter((order) => !order.orderDeliverd).length;
+  const deliveredOrders = orders.filter((order) => order.orderDeliverd).length;
+
   return (
     <Container>
-      {/* Sidebar Section */}
       <Sidebar />
-
-      {/* Main Content Section */}
       <MainContent>
         <h1>Dashboard</h1>
         <StatsContainer>
-        <StatCard to="/admin/users" color="#afede6">
+          <StatCard to="/admin/users" color="#CE93D8">
             <h3>Total Users</h3>
             <p>{data.totalUsers}</p>
           </StatCard>
           <StatCard to="/admin/products/list" color="#afedaf">
-            <h3> Total Products </h3>
+            <h3>Total Products</h3>
             <p>{data.totalProducts}</p>
           </StatCard>
-          {/* <StatCard to="/admin/products/list" color="#afedaf">
-            <h3> Total Products </h3>
-            <p>{data.totalProductQuantity}</p>
-          </StatCard> */}
-          
+          <StatCard to="/admin/order" color="#ffa07a">
+            <h3>Total Orders</h3>
+            <p>{totalOrders}</p>
+          </StatCard>
+          <StatCard to="/admin/order" color="#ffcccb">
+            <h3>Pending Orders</h3>
+            <p>{pendingOrders}</p>
+          </StatCard>
+          <StatCard to="/admin/order" color="#FFF176">
+            <h3>Delivered Orders</h3>
+            <p>{deliveredOrders}</p>
+          </StatCard>
+          <StatCard to="/admin/enquiry" color="#d1c4e9">
+            <h3>Total Enquiries</h3>
+            <p>{data.totalEnquiries}</p>
+          </StatCard>
         </StatsContainer>
       </MainContent>
     </Container>

@@ -147,6 +147,7 @@ const ProductPage = () => {
         <Table>
           <thead>
             <tr>
+              <TableHeader>Sl. No</TableHeader>
               <TableHeader>Image</TableHeader>
               <TableHeader>Title</TableHeader>
               <TableHeader>Description</TableHeader>
@@ -158,8 +159,9 @@ const ProductPage = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {products.map((product,index) => (
               <tr key={product._id}>
+                <TableData>{index+1}</TableData>
                 <TableData>
                   <ProductImage src={product.img} alt={product.title} />
                 </TableData>
