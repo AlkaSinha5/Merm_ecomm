@@ -75,3 +75,20 @@ export const getOrders = async (token) =>
       console.error('Error fetching categories:', error);
     }
   };
+
+  export const applyCoupon = async (token, { subtotal, couponCode }) => {
+    try {
+      // Send request with subtotal and couponCode
+      const response = await API.post('/coupon/apply', { subtotal, couponCode }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+  
+      return response.data; // Returning the response data, which should include the discount and discounted total
+    } catch (error) {
+      console.error('Error applying coupon:', error);
+      throw new Error(error.response?.data?.message || 'An error occurred while applying the coupon.');
+    }
+  };
+  

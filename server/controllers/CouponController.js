@@ -1,4 +1,5 @@
 import Coupon from "../models/coupon.js";
+import Order from "../models/Orders.js";
 
 export const AddCoupon = async (req, res) => {
   const { code, discountPercent, expiryDate, isActive } = req.body;
@@ -74,3 +75,39 @@ export const AddCoupon = async (req, res) => {
       res.status(500).json({ message: "Failed to delete coupon. Please try again." });
     }
   };
+
+  export const applyCoupon = async (req,res)=>{
+    try {
+      const { couponCode, subtotal } = req.body;
+  
+      if (!couponCode) {
+        return res.status(400).json({ message: "Coupon code is required" });
+      }
+  
+      // Find the coupon by code
+      const coupon = await Coupon.findOne({ code: couponCode, isActive: true });
+  
+      if (!coupon) {
+        return res.status(404).json({ message: "Invalid coupon code" });
+      }
+  
+      // Check if the coupon is valid based on dates
+      const now = new Date();
+      if (now < coupon.validFrom || now > coupon.validTo) {
+        return res.status(400).json({ message: "Coupon is not valid anymore" });
+      }
+  
+      // Calculate discount
+      const discountAmount = (subtotal * coupon.discountPercent) / 100;
+      const discountedTotal = subtotal - discountAmount;
+  
+      return res.status(200).json({
+        discountAmount,
+        discountedTotal,
+        message: `Coupon applied successfully!`,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }

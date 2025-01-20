@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
-import { addToCart, deleteFromCart, getCart, placeOrder } from "../api";
+import { addToCart, deleteFromCart, getCart, placeOrder,applyCoupon } from "../api";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { useDispatch } from "react-redux";
@@ -139,6 +139,9 @@ const Cart = () => {
   const [reload, setReload] = useState(false);
   const [products, setProducts] = useState([]);
   const [buttonLoad, setButtonLoad] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(0); // New state for discount
+  const [discountedTotal, setDiscountedTotal] = useState(0);
 
   const [deliveryDetails, setDeliveryDetails] = useState({
     firstName: "",
@@ -211,7 +214,36 @@ const Cart = () => {
     // Convert the address object to a string representation
     return `${addressObj.firstName} ${addressObj.lastName}, ${addressObj.completeAddress}, ${addressObj.phoneNumber}, ${addressObj.emailAddress}`;
   };
-
+  const applyCouponCode = async () => {
+    const token = localStorage.getItem("krist-app-token");
+    const subtotal = calculateSubtotal();
+    try {
+      // Make the API call
+      const response = await applyCoupon(token, { subtotal, couponCode });
+       console.log(response)
+      // Check for response and data structure
+      if (response && response.discountAmount !== undefined) {
+        const { discountAmount, discountedTotal, message } = response;
+        console.log(response)
+        // Update state with the discount and show success toast
+        setDiscount(discountAmount);
+        setDiscountedTotal(discountedTotal);
+        toast.success(message);
+      } else {
+        // If the structure is unexpected
+        console.error("Unexpected response structure:", response);
+        toast.error("Unexpected response from the server.");
+      }
+    } catch (error) {
+      // Handle any errors from the API
+      const errorMessage = error.response?.data?.message || "Failed to apply coupon. Please try again.";
+      console.error("Error applying coupon:", error);
+      toast.error(errorMessage);
+    }
+  };
+  
+  
+  
   const PlaceOrder = async () => {
     
     // setButtonLoad(true);
@@ -237,7 +269,8 @@ const Cart = () => {
         return;
       }
       const token = localStorage.getItem("krist-app-token");
-      const totalAmount = calculateSubtotal().toFixed(2);
+      const subtotal = calculateSubtotal().toFixed(2);
+      const totalAmount = discountedTotal > 0 ? discountedTotal.toFixed(2) : subtotal;
       const orderDetails = {
         products,
         address: convertAddressToString(deliveryDetails),
@@ -355,9 +388,35 @@ const Cart = () => {
                 ))}
               </Left>
               <Right>
-                <Subtotal>
-                  Subtotal : ${calculateSubtotal().toFixed(2)}
+              <Subtotal>
+                  <span>Subtotal:</span>
+                  <span>${calculateSubtotal().toFixed(2)}</span>
                 </Subtotal>
+                {discount > 0 && (
+                  <Subtotal>
+                    <span>Discount:</span>
+                    <span style={{ color: "green" }}>- ${discount}</span>
+                  </Subtotal>
+                )}
+                {discountedTotal > 0 && (
+                  <Subtotal>
+                    <span>Total After Discount:</span>
+                    <span>${discountedTotal}</span>
+                  </Subtotal>
+                )}
+                <TextInput
+                  placeholder="Enter Coupon Code"
+                  value={couponCode}
+                  handelChange={(e) => setCouponCode(e.target.value)}
+                />
+
+               <Button
+                  text="Apply Coupon"
+                  small
+                  isLoading={buttonLoad}
+                  isDisabled={buttonLoad}
+                  onClick={applyCouponCode}
+                />
                 <Delivery>
                   Delivery Details:
                   <div>
