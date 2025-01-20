@@ -191,7 +191,11 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
     navigate("/user/userUpdate"); // Redirect to Update Profile page
     handleClose(); // Close the dropdown menu
   };
-
+  const handlePasswordUpdate = () => {
+    navigate("/user/passwordUpdate"); // Redirect to Update Profile page
+    handleClose(); // Close the dropdown menu
+  };
+  
   return (
     <Nav>
       <NavbarContainer>
@@ -288,6 +292,9 @@ const Navbar = ({ openAuth, setOpenAuth, currentUser }) => {
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   <MenuItem onClick={handleUpdateProfile}>
                     Update Profile
+                  </MenuItem>
+                  <MenuItem onClick={handlePasswordUpdate}>
+                    Password Update
                   </MenuItem>
                 </DropdownMenu>
               </AvatarContainer>

@@ -17,6 +17,7 @@ import {
   removeFromCart,
   removeFromFavorites,
   upDateOrderStatus,
+  updatePassword,
 } from "../controllers/User.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
@@ -29,6 +30,7 @@ router.get("/getById/:id",UserGetById);
 router.get("/get/:id",UserDataGet)
 router.delete("/delete/:id",deleteUser)
 router.put("/update/:id", UserUpdate);
+router.put('/updatePassword/:id',verifyToken,updatePassword)
 
 //cart
 router.get("/cart", verifyToken, getAllCartItems);

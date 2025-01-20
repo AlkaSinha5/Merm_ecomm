@@ -489,5 +489,50 @@ export const upDateOrderStatus = async (req, res) => {
   }
 };
 
+export const updatePassword = async (req, res) => {
+  const { OldPassword, NewPassword } = req.body;
+
+  try {
+    // Get the token from the Authorization header
+    const token = req.headers.authorization?.split(" ")[1]; // Extract token from "Bearer <token>"
+    
+    if (!token) {
+      return res.status(400).json({ error: "JWT must be provided", success: false });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT); // Ensure the secret matches what's used for signing the token
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found", success: false });
+    }
+    console.log(OldPassword)
+    
+    const isMatch = await bcrypt.compare(OldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Old password does not match", success: false });
+    }
+     console.log(NewPassword)
+    // Hash the new password before saving it
+    const hashedPassword = await bcrypt.hash(NewPassword, 10);
+    user.password = hashedPassword;
+
+    await user.save();
+
+    res.status(200).send({
+      statusCode: 200,
+      message: "Password Updated Successfully",
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      statusCode: 500,
+      error: error.message,
+      success: false,
+    });
+  }
+};
+
+
 
 
