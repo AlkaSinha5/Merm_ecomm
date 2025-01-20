@@ -10,7 +10,6 @@ const SliderContainer = styled.div`
   width: 100%;
   margin: 20px auto;
   position: relative;
-
 `;
 
 const SliderImage = styled.img`
@@ -19,6 +18,8 @@ const SliderImage = styled.img`
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease-in-out;
+  opacity: ${({ isLoaded }) => (isLoaded ? 1 : 0)};
 `;
 
 const ErrorText = styled.p`
@@ -63,7 +64,13 @@ const HomeSlider = () => {
         <Slider {...sliderSettings}>
           {sliders.map((slider) => (
             <div key={slider._id}>
-              <SliderImage src={slider.img} alt="Slider" />
+              <SliderImage
+                src={slider.img}
+                alt="Slider"
+                isLoaded={false} // Initial state before image loads
+                onLoad={(e) => e.target.style.opacity = 1} // Fade-in effect after image loads
+                loading="lazy" // Lazy loading of images
+              />
             </div>
           ))}
         </Slider>

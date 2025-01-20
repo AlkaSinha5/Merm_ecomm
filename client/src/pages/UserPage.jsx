@@ -68,6 +68,12 @@ const TableButton = styled.button`
     background-color: #ff0000;
   }
 `;
+const ProfileImage = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
 
 // Users Component
 const Users = () => {
@@ -125,6 +131,7 @@ const Users = () => {
           <TableHead>
             <tr>
               <th>ID</th>
+              <th>Profile Photo</th>
               <th>Name</th>
               <th>Email</th>
               <th>Actions</th>
@@ -134,6 +141,13 @@ const Users = () => {
             {users.map((user, index) => (
               <TableRow key={user._id}>
                 <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  {user.photo ? (
+                    <ProfileImage src={user.photo} alt="Profile" />
+                  ) : (
+                    <span>No Image</span>
+                  )}
+                </TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
