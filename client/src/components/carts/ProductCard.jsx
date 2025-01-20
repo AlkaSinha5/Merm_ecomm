@@ -189,6 +189,7 @@ const ProductCard = ({ product }) => {
         setFavorite(true);
         setFavoriteLoading(false);
         toast.success(res.data.message);
+        navigate("/favorite")
         setTimeout(() => {
           window.location.reload();
         }, 1000);

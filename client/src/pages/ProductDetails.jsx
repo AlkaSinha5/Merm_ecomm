@@ -158,6 +158,10 @@ const ProductDetails = () => {
         setFavorite(true);
         setFavoriteLoading(false);
         toast.success(res.data.message);
+        navigate("/favorite")
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch((error) => {
         setFavoriteLoading(false);
@@ -194,6 +198,9 @@ const ProductDetails = () => {
         setCartLoading(false);
         toast.success(res.data.message);
         navigate("/cart");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch((err) => {
         setCartLoading(false);

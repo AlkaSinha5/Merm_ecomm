@@ -236,7 +236,7 @@ const Cart = () => {
       }
     } catch (error) {
       // Handle any errors from the API
-      const errorMessage = error.response?.data?.message || "Failed to apply coupon. Please try again.";
+      const errorMessage = error.response?.data?.message || "Add coupon first. Please try again later.";
       console.error("Error applying coupon:", error);
       toast.error(errorMessage);
     }
