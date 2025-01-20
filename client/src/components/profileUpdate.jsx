@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux"; // Using Redux's dispatch function
+import { useNavigate } from "react-router-dom";
+import { updateUser } from "../redux/reducers/userSlice"; // Assuming you have an action to update user
 
 const UpdateUser = ({ currentUser }) => {
   const userId = currentUser?._id; // Safeguard in case currentUser is undefined
@@ -10,7 +13,8 @@ const UpdateUser = ({ currentUser }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const dispatch = useDispatch(); // Initialize dispatch to update the Redux state
+  const navigate = useNavigate();
   // Fetch user by ID
   useEffect(() => {
     if (!userId) return; // Avoid making the request if userId is not available
@@ -53,7 +57,7 @@ const UpdateUser = ({ currentUser }) => {
     setError(null);
 
     const updatedUser = { ...user };
-    
+
     // Remove photo if not updated (optional)
     if (!user.photo) {
       delete updatedUser.photo;
@@ -61,7 +65,13 @@ const UpdateUser = ({ currentUser }) => {
 
     try {
       const res = await axios.put(`http://localhost:8080/api/user/update/${userId}`, updatedUser);
+      setUser(res.data);  // Update the state with the response data (instant update)
+
+      // Update the global user state (Redux)
+      dispatch(updateUser(res.data)); // Dispatch the updated user data to Redux
+
       alert("User updated successfully!");
+      navigate("/");
     } catch (err) {
       setError("Failed to update user. Please try again.");
     } finally {
