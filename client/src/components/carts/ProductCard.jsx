@@ -189,6 +189,9 @@ const ProductCard = ({ product }) => {
         setFavorite(true);
         setFavoriteLoading(false);
         toast.success(res.data.message);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch((error) => {
         setFavoriteLoading(false);
@@ -208,6 +211,9 @@ const ProductCard = ({ product }) => {
         setFavorite(false);
         setFavoriteLoading(false);
         toast.success("Product removed from favorites!");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch((err) => {
         setFavoriteLoading(false);
@@ -221,6 +227,9 @@ const ProductCard = ({ product }) => {
       .then((res) => {
         toast.success(res.data.message);
         navigate("/cart");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch((err) => {
         toast.error("Failed to add to cart!");
