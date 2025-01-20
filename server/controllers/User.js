@@ -90,7 +90,7 @@ export const UserLogin = async (req, res, next) => {
 export const UserUpdate = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, photo, email,password } = req.body;
+    const { name, photo, email } = req.body;
 
     // Validate MongoDB Object ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -113,15 +113,15 @@ export const UserUpdate = async (req, res, next) => {
       updatedImageUrl = uploadedImage.secure_url;
     }
 
-    let hashedPassword = existingUser.password; // Default to the current password if not updated
-    if (password) {
-      const salt = await bcrypt.genSalt(10); // Generate salt
-      hashedPassword = await bcrypt.hash(password, salt); // Hash the password
-    }
+    // let hashedPassword = existingUser.password; // Default to the current password if not updated
+    // if (password) {
+    //   const salt = await bcrypt.genSalt(10); // Generate salt
+    //   hashedPassword = await bcrypt.hash(password, salt); // Hash the password
+    // }
     // Update Category fields
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { name, email, password:hashedPassword, photo: updatedImageUrl },
+      { name, email, photo: updatedImageUrl },
       { new: true } // Return the updated document
     );
 

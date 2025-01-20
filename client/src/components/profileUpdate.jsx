@@ -6,7 +6,6 @@ const UpdateUser = ({ currentUser }) => {
   const [user, setUser] = useState({
     name: "",
     email: "",
-    password: "",
     photo: "",
   });
   const [loading, setLoading] = useState(false);
@@ -19,7 +18,7 @@ const UpdateUser = ({ currentUser }) => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/user/getById/${userId}`);
-        setUser(response.data || { name: "", email: "", password: "", photo: "" });
+        setUser(response.data || { name: "", email: "", photo: "" });
       } catch (err) {
         setError("Failed to fetch user. Please try again.");
       }
@@ -55,9 +54,9 @@ const UpdateUser = ({ currentUser }) => {
 
     const updatedUser = { ...user };
     
-    // If password is empty, don't send it in the update request
-    if (!user.password) {
-      delete updatedUser.password;
+    // Remove photo if not updated (optional)
+    if (!user.photo) {
+      delete updatedUser.photo;
     }
 
     try {
@@ -96,7 +95,7 @@ const UpdateUser = ({ currentUser }) => {
     objectFit: "cover",
     borderRadius: "8px",
   };
-  
+
   const buttonStyle = {
     padding: "10px 20px",
     backgroundColor: "#598334",
@@ -147,21 +146,6 @@ const UpdateUser = ({ currentUser }) => {
             value={user.email || ""}
             onChange={handleInputChange}
             placeholder="Enter Email"
-            disabled={loading}
-            style={inputStyle}
-          />
-        </label>
-      </div>
-
-      <div>
-        <label>
-          Password:
-          <input
-            type="password"
-            name="password"
-            value={user.password || ""}
-            onChange={handleInputChange}
-            placeholder="Enter Password (Leave empty if not changing)"
             disabled={loading}
             style={inputStyle}
           />
