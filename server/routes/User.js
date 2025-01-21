@@ -16,6 +16,8 @@ import {
   placeOrder,
   removeFromCart,
   removeFromFavorites,
+  resetPassword,
+  sendMailforForgetPassword,
   upDateOrderStatus,
   updatePassword,
 } from "../controllers/User.js";
@@ -31,6 +33,8 @@ router.get("/get/:id",UserDataGet)
 router.delete("/delete/:id",deleteUser)
 router.put("/update/:id", UserUpdate);
 router.put('/updatePassword/:id',verifyToken,updatePassword)
+router.post('/emailSendForForget', sendMailforForgetPassword)
+router.post('/reset/:userId/:token', resetPassword)
 
 //cart
 router.get("/cart", verifyToken, getAllCartItems);

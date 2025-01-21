@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import Sidebar from "../components/SideBar";
+import { toast } from "react-toastify";
 
 // Styled Components (same as before)
 const Container = styled.div`
@@ -264,6 +265,12 @@ const AddSubCategory = () => {
         const response = await axios.post("http://localhost:8080/api/subcategory/add", { name, img, categoryId });
         // Add the new subcategory to the subcategories list
         setSubCategories((prevSubCategories) => [...prevSubCategories, response.data.subCategory]);
+        toast.success("SubCategories Add Successfully");
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      
       }
 
       setSubCategory({ name: "", img: "", categoryId: "", id: null }); // Clear the form

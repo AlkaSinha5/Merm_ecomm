@@ -27,13 +27,28 @@ const Span = styled.div`
   font-weight: 400;
   color: ${({ theme }) => theme.text_secondary + 90};
 `;
-
+const ForgotPasswordLink = styled.div`
+  font-size: 14px;
+  color: ${({ theme }) => theme.primary};
+  cursor: pointer;
+  text-align: center;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 const SignIn = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const handleForgotPassword = () => {
+    navigate("/user/forgetPasword"); // Navigate to a "Forgot Password" page
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+    
+  };
 
   const handleSignIn = async () => {
     setLoading(true); // Show loading state during API call
@@ -97,6 +112,9 @@ const SignIn = ({ onLoginSuccess }) => {
         />
         <Button text="Sign In" onClick={handleSignIn} isLoading={loading} />
       </div>
+      <ForgotPasswordLink onClick={handleForgotPassword}>
+        Forgot Password?
+      </ForgotPasswordLink>
     </Container>
   );
 };

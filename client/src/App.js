@@ -32,6 +32,8 @@ import EditPage from "./pages/addressEdit";
 import ProfileUpdate from "./components/profileUpdate";
 import AddCoupon from "./pages/AddCoupon";
 import UpdatePassword from "./components/updatePassword";
+import ForgotPassword from "./components/sendMail";
+import ResetPassword from "./components/resetPassword";
 
 
 // Styled Components
@@ -120,7 +122,8 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
 
           <Route path="/user/userUpdate" element={<ProfileUpdate currentUser={currentUser}/>} />
           <Route path="/user/passwordUpdate" element={<UpdatePassword currentUser={currentUser}/>} />
-
+          <Route path="/user/forgetPasword" element={<ForgotPassword/>} />
+          <Route path="/user/resetPasword/:userId/:token" element={<ResetPassword/>} />
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/users" element={<Users />} />

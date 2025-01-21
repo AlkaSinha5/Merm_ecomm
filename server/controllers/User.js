@@ -5,8 +5,9 @@ import { createError } from "../error.js";
 import User from "../models/User.js";
 import Orders from "../models/Orders.js";
 import Products from "../models/Products.js"; // Ensure Products model is imported
-
 import { v2 as cloudinary } from "cloudinary";
+import crypto from 'crypto';
+import { sendEmail } from '../helper/sendMail.js'; // Adjust path if necessary
 
 
 cloudinary.config({
@@ -535,4 +536,68 @@ export const updatePassword = async (req, res) => {
 
 
 
+// In-memory store for tokens
+let resetTokens = {}; // This object will store tokens temporarily with expiration times
+
+// Send password reset email
+export const sendMailforForgetPassword = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user)
+      return res.status(200).json({ message: 'User with given email does not exist', success: false });
+
+    // Generate a reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    
+    // Store the token in memory with an expiration time (1 hour from now)
+    resetTokens[resetToken] = {
+      userId: user._id,
+      expireAt: Date.now() + 3600000, // Token expires in 1 hour
+    };
+
+    const link = `http://localhost:3000/user/resetPasword/${user._id}/${resetToken}`;
+    
+    // Send the reset email
+    await sendEmail(user.email, "Password Reset", link);
+
+    return res.status(200).json({ message: 'Password reset link sent to your email account', success: true });
+  } catch (error) {
+    return res.status(500).json({ error: error.message, success: false });
+  }
+};
+
+// Reset password
+export const resetPassword = async (req, res) => {
+  try {
+    const { userId, token } = req.params;
+
+    // Optional: Add token validation logic here if needed (uncomment and modify as required)
+    // if (!resetTokens[token] || resetTokens[token].expireAt < Date.now()) {
+    //   return res.status(400).json({ message: 'Invalid link or expired', success: false });
+    // }
+    // if (resetTokens[token].userId !== userId) {
+    //   return res.status(400).json({ message: 'Invalid link or expired', success: false });
+    // }
+
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ message: 'User not found', success: false });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(req.body.password, 10); // Salt rounds set to 10
+
+    // Update the user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    // Optional: Remove the token from memory (if you are using in-memory tokens)
+    // delete resetTokens[token];
+
+    return res.status(200).json({ message: 'Password reset successfully', success: true });
+  } catch (error) {
+    return res.status(500).json({ error: error.message, success: false });
+  }
+};
 
