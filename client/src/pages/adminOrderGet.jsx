@@ -20,7 +20,7 @@ const SidebarContainer = styled.div`
 
 const ContainerAdmin = styled.div`
   flex: 1;
-  padding: 30px;
+  padding: 10px;
   background-color: #fff;
   display: flex;
   flex-direction: column;
@@ -73,7 +73,7 @@ const TableWrapper = styled.div`
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 1200px;
 `;
 
 const TableHead = styled.thead`
@@ -81,7 +81,7 @@ const TableHead = styled.thead`
   color: white;
 
   th {
-    padding: 16px;
+    padding: 6px;
     text-align: left;
     font-weight: bold;
     border-bottom: 2px solid #ddd;
@@ -101,7 +101,7 @@ const TableBody = styled.tbody`
   }
 
   td {
-    padding: 14px;
+    padding: 6px;
     border-bottom: 1px solid #ddd;
     color: #555;
     font-size: 14px;
@@ -118,6 +118,8 @@ const ProductsList = styled.ul`
 
   li {
     margin-bottom: 5px;
+    word-wrap: break-word;
+    line-height: 1.4;
   }
 `;
 
@@ -250,7 +252,7 @@ const AdminOrdersPage = () => {
             <Table>
               <TableHead>
                 <tr>
-                <th>Sl. No.</th>
+                  <th>Sl. No.</th>
                   <th>Total Amount</th>
                   <th>Address</th>
                   <th>Status</th>
@@ -258,14 +260,14 @@ const AdminOrdersPage = () => {
                   <th>Order Process</th>
                   <th>Order Delivered</th>
                   <th>Order Cancelled</th>
-                  <th>Products</th>
-                  <th>Order ID</th>
+                  <th style={{ width: "500px", wordWrap: "break-word" }}>Products</th>
+                  <th style={{ minWidth: "150px" }}>Order ID</th>
                 </tr>
               </TableHead>
               <TableBody>
-                {filteredOrders.map((order,index) => (
+                {filteredOrders.map((order, index) => (
                   <tr key={order._id}>
-                    <td>{index+1}</td>
+                    <td>{index + 1}</td>
                     <td>{order.total_amount.$numberDecimal}</td>
                     <td>{order.address}</td>
                     <td>{order.status}</td>
@@ -311,15 +313,14 @@ const AdminOrdersPage = () => {
                     </td>
                     <td>
                       <ProductsList>
-                      {order.products.map((item) => {
-                          fetchProductDetails(item.product); // Fetch product details dynamically
+                        {order.products.map((item) => {
+                          fetchProductDetails(item.product);
                           return (
-                            
                             <li key={item.product}>
-                            {productDetails[item.product]
-                              ? ` Name :${productDetails[item.product].name} Quantity: ${item.quantity}`
-                              : "Loading..."}
-                          </li>
+                              {productDetails[item.product]
+                                ? `Name: ${productDetails[item.product].name}, Quantity: ${item.quantity}`
+                                : "Loading..."}
+                            </li>
                           );
                         })}
                       </ProductsList>
