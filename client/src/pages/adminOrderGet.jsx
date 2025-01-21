@@ -11,14 +11,17 @@ const Container = styled.div`
 `;
 
 const SidebarContainer = styled.div`
-  width: 280px;
-  background-color: #4a3f46;
-  color: #fff;
-  min-height: 100vh;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; /* Set sidebar width */
+  height: 100%;
+  background-color: #4a3f46; /* Adjust the sidebar color */
+  padding-top: 20px;
 `;
 
 const ContainerAdmin = styled.div`
+margin-left: 250px; /* Space for the fixed sidebar */
   flex: 1;
   padding: 10px;
   background-color: #fff;

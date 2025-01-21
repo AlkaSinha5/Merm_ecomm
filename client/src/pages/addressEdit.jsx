@@ -7,15 +7,24 @@ const PageContainer = styled.div`
   min-height: 100vh;
   background-color: #f9f9f9;
 `;
-
+const SidebarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #4a3f46;
+  box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+  padding-top: 20px;
+`;
 const ContentWrapper = styled.div`
+margin-left: 250px; /* Space for the fixed sidebar */
   flex-grow: 1;
-  max-width: 1000px;
-  margin: 40px auto;
   padding: 40px;
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Allow scrolling */
 `;
 
 const Form = styled.form`
@@ -167,7 +176,9 @@ const EditPage = () => {
 
   return (
     <PageContainer>
-      <Sidebar />
+      <SidebarContainer>
+        <Sidebar />
+      </SidebarContainer>
       <ContentWrapper>
         <h2>Edit Address</h2>
         <Form onSubmit={handleSubmit}>

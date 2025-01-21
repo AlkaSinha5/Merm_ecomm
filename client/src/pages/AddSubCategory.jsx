@@ -10,10 +10,23 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
+const SidebarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #4a3f46;
+  box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+  padding-top: 20px;
+`;
+
 const MainContent = styled.div`
+ margin-left: 250px; /* Space for the fixed sidebar */
   flex: 1;
   padding: 10px;
   background-color: #f8f9fa;
+  overflow-y: auto; /* Allow scrolling */
 `;
 
 const Card = styled.div`
@@ -306,23 +319,25 @@ const AddSubCategory = () => {
   };
   return (
     <Container>
-      <Sidebar />
+      <SidebarContainer>
+        <Sidebar />
+      </SidebarContainer>
       <MainContent>
         <Card>
           {/* <Title>Add SubCategory</Title> */}
           <Title>{subCategory.id ? "Edit SubCategory" : "Add SubCategory"}</Title>
           <FlexContainer>
             {/* Name Input Container */}
-            <FormGroup>
+          <FormGroup>
               <label htmlFor="name">SubCategory Name</label>
-              <Input
+            <Input
                 type="text"
                 id="name"
-                name="name"
-                value={subCategory.name}
-                onChange={handleInputChange}
-                placeholder="Enter SubCategory Name"
-              />
+              name="name"
+              value={subCategory.name}
+              onChange={handleInputChange}
+              placeholder="Enter SubCategory Name"
+            />
             </FormGroup>
 
             {/* Image Upload Container */}
@@ -373,27 +388,27 @@ const AddSubCategory = () => {
             </Button>
         </Card>
 
-        <SubCategoryList>
+          <SubCategoryList>
           <Title>SubCategories</Title>
-          <Table>
-  <thead>
-    <tr>
+            <Table>
+              <thead>
+                <tr>
       <TableHeader>Sl. No</TableHeader>
-      <TableHeader>Name</TableHeader>
+                  <TableHeader>Name</TableHeader>
       <TableHeader>Image</TableHeader>
-      <TableHeader>Category</TableHeader>
+                  <TableHeader>Category</TableHeader>
       <TableHeader>Actions</TableHeader>
-    </tr>
-  </thead>
-  <tbody>
+                </tr>
+              </thead>
+              <tbody>
     {subCategories.map((subCategory, index) => {
       // Find the category name based on the categoryId
       const category = categories.find((cat) => cat._id === subCategory.categoryId);
       return (
-        <TableRow key={subCategory._id}>
+                  <TableRow key={subCategory._id}>
           <TableData>{index + 1}</TableData>
-          <TableData>{subCategory.name}</TableData>
-          <TableData>
+                    <TableData>{subCategory.name}</TableData>
+                    <TableData>
             <img
               src={subCategory.img}
               alt={subCategory.name}
@@ -412,14 +427,14 @@ const AddSubCategory = () => {
             >
               Delete
             </Button>
-          </TableData>
-        </TableRow>
+                    </TableData>
+                  </TableRow>
       );
     })}
-  </tbody>
-</Table>
+              </tbody>
+            </Table>
 
-        </SubCategoryList>
+          </SubCategoryList>
       </MainContent>
     </Container>
   );

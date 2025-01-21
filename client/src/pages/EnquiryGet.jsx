@@ -8,28 +8,25 @@ const PageContainer = styled.div`
   background-color: #f7f7f7;
 `;
 
-const SidebarWrapper = styled.div`
-  width: 250px;
-  background-color: #4a3f46;
-  color: white;
-  padding: 20px;
+const SidebarContainer = styled.div`
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; /* Set sidebar width */
   height: 100%;
-  overflow-y: auto;
-
-  @media (max-width: 768px) {
-    width: 100px; /* Collapse the sidebar on smaller screens */
-  }
+  background-color: #4a3f46; /* Adjust the sidebar color */
+  padding-top: 20px;
 `;
 
 const ContentWrapper = styled.div`
-  margin-left: 280px; /* Offset for the sidebar */
+ margin-left: 250px; /* Space for the fixed sidebar */
   flex: 1;
   padding: 30px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   transition: margin-left 0.3s ease;
+   overflow-y: auto; /* Allow scrolling in main content */
 
   @media (max-width: 768px) {
     margin-left: 100px; /* Adjust for the collapsed sidebar */
@@ -91,9 +88,9 @@ const EnquiriesPage = () => {
 
   return (
     <PageContainer>
-      <SidebarWrapper>
+       <SidebarContainer>
         <Sidebar />
-      </SidebarWrapper>
+      </SidebarContainer>
       <ContentWrapper>
         <h2>Enquiries List</h2>
         {loading ? (

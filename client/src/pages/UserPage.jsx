@@ -14,11 +14,26 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
+const SidebarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #4a3f46;
+  color: white;
+  // padding: 20px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+`;
 
 const MainContent = styled.div`
   flex: 1;
+  margin-left: 250px; /* Adjusted to make space for fixed sidebar */
   padding: 20px;
   background-color: #f4f4f4;
+  overflow-y: auto; /* Make main content scrollable */
+  height: 100vh;
 `;
 
 const Table = styled.table`
@@ -122,7 +137,9 @@ const Users = () => {
   return (
     <Container>
       {/* Sidebar */}
-     <Sidebar/>
+      <SidebarContainer>
+        <Sidebar />
+      </SidebarContainer>
 
       {/* Main Content */}
       <MainContent>

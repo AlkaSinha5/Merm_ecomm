@@ -9,10 +9,21 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
+const SidebarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; /* Set sidebar width */
+  height: 100%;
+  background-color: #4a3f46; /* Adjust the sidebar color */
+  padding-top: 20px;
+`;
 const MainContent = styled.div`
+margin-left: 250px; /* Space for the fixed sidebar */
   flex: 1;
   padding: 20px;
   background-color: #f4f4f4;
+   overflow-y: auto; /* Allow scrolling in main content */
 `;
 
 const Input = styled.input`
@@ -238,7 +249,9 @@ const AddProduct = () => {
 
   return (
     <Container>
-      <Sidebar />
+      <SidebarContainer>
+        <Sidebar />
+      </SidebarContainer>
       <MainContent>
         <h2>Add New Product</h2>
         <FormWrapper>

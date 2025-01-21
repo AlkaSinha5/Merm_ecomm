@@ -9,10 +9,22 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
+const SidebarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; /* Set sidebar width */
+  height: 100%;
+  background-color: #4a3f46; /* Adjust the sidebar color */
+  padding-top: 20px;
+`;
+
 const MainContent = styled.div`
+  margin-left: 250px; /* Space for the fixed sidebar */
   flex: 1;
-  padding: 10px;
+  padding: 20px;
   background-color: #f8f9fa;
+  overflow-y: auto; /* Allow scrolling in main content */
 `;
 
 const Card = styled.div`
@@ -105,7 +117,7 @@ const Button = styled.button`
 
   &.edit {
     background-color: #f0ad4e;
-    margin-right:10px;
+    margin-right: 10px;
     &:hover {
       background-color: #ec971f;
     }
@@ -216,7 +228,6 @@ const AddCategory = () => {
       if (id) {
         // If an ID is present, update the existing category
         const response = await axios.put(`http://localhost:8080/api/category/update/${id}`, { name, img });
-        // console.log("Category updated successfully:", response.data);
 
         // Update the category list with the updated category
         setCategories((prevCategories) =>
@@ -227,7 +238,6 @@ const AddCategory = () => {
       } else {
         // Add a new category
         const response = await axios.post("http://localhost:8080/api/category/add", { name, img });
-        // console.log("Category added successfully:", response.data);
 
         // Add the new category to the categories list
         setCategories((prevCategories) => [...prevCategories, response.data.Category]);
@@ -266,7 +276,9 @@ const AddCategory = () => {
 
   return (
     <Container>
-      <Sidebar />
+      <SidebarContainer>
+        <Sidebar />
+      </SidebarContainer>
       <MainContent>
         <Card>
           <Title>{category.id ? "Edit Category" : "Add Category"}</Title>
@@ -296,9 +308,9 @@ const AddCategory = () => {
               />
 
               {category.img && (
-                <ImagePreview>
+              <ImagePreview>
                   <img src={category.img} alt="Preview" />
-                </ImagePreview>
+              </ImagePreview>
               )}
             </FormGroup>
           </FlexContainer>

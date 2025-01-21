@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 // Styled Components for Sidebar
 const SidebarContainer = styled.div`
-  width: 250px;
+  width: 200px;
   background-color: #4a3f46;
   color: white;
   padding: 20px;

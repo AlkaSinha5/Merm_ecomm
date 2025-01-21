@@ -8,11 +8,21 @@ const Container = styled.div`
   display: flex;
   min-height: 100vh;
 `;
-
+const SidebarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; /* Set sidebar width */
+  height: 100%;
+  background-color: #4a3f46; /* Adjust the sidebar color */
+  padding-top: 20px;
+`;
 const MainContent = styled.div`
+margin-left: 250px; /* Adjusted to make space for fixed sidebar */
   flex: 1;
   padding: 10px;
   background-color: #f8f9fa;
+   overflow-y: auto; /* Make main content scrollable */
 `;
 
 const Card = styled.div`
@@ -278,7 +288,9 @@ const AddSlider = () => {
 
   return (
     <Container>
-      <Sidebar />
+       <SidebarContainer>
+        <Sidebar />
+      </SidebarContainer>
       <MainContent>
         <Card>
           <Title>Add Slider</Title>
