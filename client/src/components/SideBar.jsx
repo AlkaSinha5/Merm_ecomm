@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { FaTachometerAlt, FaUsers, FaBoxOpen, FaRegListAlt, FaSlidersH, FaEnvelope, FaMapMarkerAlt, FaTag } from "react-icons/fa";
+import { FiChevronRight } from "react-icons/fi";
 
 // Styled Components for Sidebar
 const SidebarContainer = styled.div`
@@ -19,7 +21,8 @@ const SidebarLink = styled(Link)`
   padding: 10px;
   border-radius: 5px;
   transition: background 0.3s ease;
-  display: block;
+  display: flex;
+  align-items: center;
 
   &.active {
     background: #333;
@@ -29,6 +32,10 @@ const SidebarLink = styled(Link)`
 
   &:hover {
     background: #555;
+  }
+
+  svg {
+    margin-right: 10px;
   }
 `;
 
@@ -85,18 +92,21 @@ const Sidebar = () => {
         to="/admin/dashboard"
         className={location.pathname === "/admin/dashboard" ? "active" : ""}
       >
+        <FaTachometerAlt />
         Dashboard
       </SidebarLink>
       <SidebarLink
         to="/admin/users"
         className={location.pathname === "/admin/users" ? "active" : ""}
       >
+        <FaUsers />
         Manage Users
       </SidebarLink>
 
       {/* Products Section */}
       <SidebarItem>
         <MainLink onClick={() => setIsProductsOpen(!isProductsOpen)}>
+          <FaBoxOpen />
           Products
           <span>{isProductsOpen ? "▲" : "▼"}</span>
         </MainLink>
@@ -105,24 +115,28 @@ const Sidebar = () => {
             to="/admin/category"
             className={location.pathname === "/admin/category" ? "active" : ""}
           >
+            <FaTag />
             Add Category
           </SubLink>
           <SubLink
             to="/admin/subcategory"
             className={location.pathname === "/admin/subcategory" ? "active" : ""}
           >
+            <FaTag />
             Add Sub Category
           </SubLink>
           <SubLink
             to="/admin/products"
             className={location.pathname === "/admin/products" ? "active" : ""}
           >
+            <FaBoxOpen />
             Add Product
           </SubLink>
           <SubLink
             to="/admin/products/list"
             className={location.pathname === "/admin/products/list" ? "active" : ""}
           >
+            <FaRegListAlt />
             Product List
           </SubLink>
         </SubLinks>
@@ -131,6 +145,7 @@ const Sidebar = () => {
       {/* Informations Section */}
       <SidebarItem>
         <MainLink onClick={() => setIsInformationsOpen(!isInformationsOpen)}>
+          <FaSlidersH />
           Informations
           <span>{isInformationsOpen ? "▲" : "▼"}</span>
         </MainLink>
@@ -139,27 +154,30 @@ const Sidebar = () => {
             to="/admin/slidder"
             className={location.pathname === "/admin/slidder" ? "active" : ""}
           >
+            <FaSlidersH />
             Slider
           </SubLink>
           <SubLink
             to="/admin/enquiry"
             className={location.pathname === "/admin/enquiry" ? "active" : ""}
           >
+            <FaEnvelope />
             Enquiry
           </SubLink>
           <SubLink
             to="/admin/address"
             className={location.pathname === "/admin/address" ? "active" : ""}
           >
+            <FaMapMarkerAlt />
             Address
           </SubLink>
           <SubLink
             to="/admin/coupon"
             className={location.pathname === "/admin/coupon" ? "active" : ""}
           >
+            <FaTag />
             Coupon
           </SubLink>
-          
         </SubLinks>
       </SidebarItem>
 
@@ -167,6 +185,7 @@ const Sidebar = () => {
         to="/admin/order"
         className={location.pathname === "/admin/order" ? "active" : ""}
       >
+        <FaRegListAlt />
         Manage Order
       </SidebarLink>
     </SidebarContainer>
