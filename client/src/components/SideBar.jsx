@@ -18,7 +18,7 @@ const SidebarContainer = styled.div`
 const SidebarLink = styled(Link)`
   color: white;
   text-decoration: none;
-  padding: 10px;
+  padding: 5px;
   border-radius: 5px;
   transition: background 0.3s ease;
   display: flex;
@@ -46,17 +46,23 @@ const SidebarItem = styled.div`
 
 const MainLink = styled.div`
   color: white;
-  padding: 10px;
+  padding: 5px;
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  justify-content: flex-start;  // Aligns the text and icon to the left  
 
   &:hover {
     background: #555;
   }
+
+  svg {
+    margin-right: 10px;
+  }
+
 `;
 
 const SubLinks = styled.div`
@@ -107,8 +113,8 @@ const Sidebar = () => {
       <SidebarItem>
         <MainLink onClick={() => setIsProductsOpen(!isProductsOpen)}>
           <FaBoxOpen />
-          Products
-          <span>{isProductsOpen ? "▲" : "▼"}</span>
+          <span style={{ marginLeft: "3px" ,marginRight: "60px"}}>Products</span>
+          <span >{isProductsOpen ? "▲" : "▼"}</span>
         </MainLink>
         <SubLinks isVisible={isProductsOpen || isProductsPath}>
           <SubLink
@@ -146,7 +152,7 @@ const Sidebar = () => {
       <SidebarItem>
         <MainLink onClick={() => setIsInformationsOpen(!isInformationsOpen)}>
           <FaSlidersH />
-          Informations
+          <span style={{ marginLeft: "3px" ,marginRight: "30px"}}>Informations</span>
           <span>{isInformationsOpen ? "▲" : "▼"}</span>
         </MainLink>
         <SubLinks isVisible={isInformationsOpen || isInformationsPath}>
