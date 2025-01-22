@@ -133,6 +133,9 @@ const Title = styled.div`
   font-size: 16px;
   font-weight: 700;
   color: ${({ theme }) => theme.text_primary};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const Desc = styled.div`

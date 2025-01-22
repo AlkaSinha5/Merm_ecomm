@@ -34,6 +34,7 @@ import AddCoupon from "./pages/AddCoupon";
 import UpdatePassword from "./components/updatePassword";
 import ForgotPassword from "./components/sendMail";
 import ResetPassword from "./components/resetPassword";
+import PageNotFound from "./pages/NotFound";
 
 
 // Styled Components
@@ -124,6 +125,7 @@ function MainRoutes({ currentUser, openAuth, setOpenAuth }) {
           <Route path="/user/passwordUpdate" element={<UpdatePassword currentUser={currentUser}/>} />
           <Route path="/user/forgetPasword" element={<ForgotPassword/>} />
           <Route path="/user/resetPasword/:userId/:token" element={<ResetPassword/>} />
+           <Route path="*" element ={<PageNotFound/>}></Route>
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/users" element={<Users />} />

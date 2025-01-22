@@ -3,63 +3,67 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Card = styled.div`
-  width: 250px;
+  width: 170px;
   display: flex;
+   border-radius: 50%;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   transition: all 0.3s ease-out;
   cursor: pointer;
   @media (max-width: 600px) {
-    width: 170px;
+    width: 70px;
   }
 `;
 const Image = styled.img`
   width: 100%;
-  height: 320px;
-  border-radius: 6px;
+  height: 140px;
+  border-radius: 50%;
   object-fit: cover;
   transition: all 0.3s ease-out;
+  &:hover {
+    opacity: 0.8;
+  }
   @media (max-width: 600px) {
-    height: 240px;
+    height: 100px;
   }
 `;
 const Top = styled.div`
   display: flex;
   align-items: center;
+   border-radius: 50%;
   justify-content: center;
   position: relative;
   border-radius: 6px;
   transition: all 0.3s ease-out;
-  &:hover {
-    background-color: ${({ theme }) => theme.primary};
-  }
-  &:hover ${Image} {
-    opacity: 0.8;
-  }
+  
 `;
 const Menu = styled.div`
   width: 90%;
   position: absolute;
   z-index: 10;
   color: ${({ theme }) => theme.text_primary};
-  bottom: 20px;
-  left: 50;
-  right: 50;
+  bottom: 10px;
+  left: 20;
+  right: 20;
   display: flex;
-  gap: 12px;
+  gap: 10px;
 `;
 const Button = styled.div`
   width: 100%;
   color: ${({ theme }) => theme.primary};
-  padding: 12px 20px;
+  padding: 3px 5px;
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
-  font-weight: 500;
+  font-weight: 300;
+  font-size: 14px; /* Set a smaller font size */
   @media (max-width: 600px) {
-    padding: 6px 14px;
+  font-weight: 350;
+    font-size: 12px; /* Even smaller font size for smaller screens */
+    padding: 2px 4px; /* Adjust padding for smaller screens */
   }
 `;
+
 const Sale = styled.div`
   position: absolute;
   z-index: 10;

@@ -51,8 +51,46 @@ const CardWrapper = styled.div`
   flex-wrap: wrap;
   gap: 24px;
   justify-content: center;
+  width: 100%; /* Ensure the wrapper itself takes the full width of its container */
+  
+  @media (min-width: 751px) {
+    > * { 
+      flex: 1 1 calc(20% - 24px); /* Two cards per row, accounting for the gap */
+      max-width: calc(20% - 24px); /* Max width of each card */
+    }
+  }
+
   @media (max-width: 750px) {
     gap: 14px;
+
+    > * { 
+      flex: 1 1 45%; /* Full width for smaller screens */
+      max-width: 45%; /* Prevent overflow */
+    }
+  }
+`;
+const CardWrapperCategory = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+   border-radius: 50%;
+  width: 100%; /* Ensure the wrapper itself takes the full width of its container */
+  
+  @media (min-width: 751px) {
+    > * { 
+      flex: 1 1 10% ; /* Two cards per row, accounting for the gap */
+      max-width: 10% ; /* Max width of each card */
+    }
+  }
+
+  @media (max-width: 750px) {
+    gap: 14px;
+
+    > * { 
+      flex: 1 1 30%; /* Full width for smaller screens */
+      max-width: 30%; /* Prevent overflow */
+    }
   }
 `;
 
@@ -98,11 +136,11 @@ const Home = () => {
       {/* Categories Section */}
       <Section>
         <Title center>Shop by Categories</Title>
-        <CardWrapper>
+        <CardWrapperCategory>
           {categories.map((category) => (
             <ProductCategoryCard key={category.id} category={category} />
           ))}
-        </CardWrapper>
+        </CardWrapperCategory>
       </Section>
 
       {/* Best Seller Section */}

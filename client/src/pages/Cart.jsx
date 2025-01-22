@@ -412,7 +412,6 @@ const Cart = () => {
 
                <Button
                   text="Apply Coupon"
-                  small
                   isLoading={buttonLoad}
                   isDisabled={buttonLoad}
                   onClick={applyCouponCode}
@@ -427,7 +426,6 @@ const Cart = () => {
                       }}
                     >
                       <TextInput
-                        small
                         placeholder="First Name"
                         value={deliveryDetails.firstName}
                         handelChange={(e) =>
@@ -438,7 +436,6 @@ const Cart = () => {
                         }
                       />
                       <TextInput
-                        small
                         placeholder="Last Name"
                         value={deliveryDetails.lastName}
                         handelChange={(e) =>
@@ -450,7 +447,6 @@ const Cart = () => {
                       />
                     </div>
                     <TextInput
-                      small
                       value={deliveryDetails.emailAddress}
                       handelChange={(e) =>
                         setDeliveryDetails({
@@ -461,7 +457,6 @@ const Cart = () => {
                       placeholder="Email Address"
                     />
                     <TextInput
-                      small
                       value={deliveryDetails.phoneNumber}
                       handelChange={(e) =>
                         setDeliveryDetails({
@@ -472,7 +467,6 @@ const Cart = () => {
                       placeholder="Phone no. +91 XXXXX XXXXX"
                     />
                     <TextInput
-                      small
                       textArea
                       rows="5"
                       handelChange={(e) =>
@@ -489,22 +483,21 @@ const Cart = () => {
                 <Delivery>
                   Payment Details:
                   <div>
-                    <TextInput small placeholder="Card Number" />
+                    <TextInput  placeholder="Card Number" />
                     <div
                       style={{
                         display: "flex",
                         gap: "6px",
                       }}
                     >
-                      <TextInput small placeholder="Expiry Date" />
-                      <TextInput small placeholder="CVV" />
+                      <TextInput  placeholder="Expiry Date" />
+                      <TextInput placeholder="CVV" />
                     </div>
-                    <TextInput small placeholder="Card Holder name" />
+                    <TextInput  placeholder="Card Holder name" />
                   </div>
                 </Delivery>
                 <Button
                   text="Place Order"
-                  small
                   isLoading={buttonLoad}
                   isDisabled={buttonLoad}
                   onClick={PlaceOrder}
