@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import ProductCard from "../components/carts/ProductCard";
 import styled from "styled-components";
 import { filter } from "../utils/data";
@@ -19,6 +20,7 @@ const Container = styled.div`
   }
   background: ${({ theme }) => theme.bg};
 `;
+
 const Filters = styled.div`
   width: 100%;
   height: fit-content;
@@ -30,21 +32,25 @@ const Filters = styled.div`
     overflow-y: scroll;
   }
 `;
+
 const FilterSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
   padding: 12px;
 `;
+
 const Title = styled.div`
   font-size: 20px;
   font-weight: 500;
 `;
+
 const Menu = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
 `;
+
 const Products = styled.div`
   padding: 12px;
   overflow: hidden;
@@ -55,6 +61,7 @@ const Products = styled.div`
     height: 100%;
   }
 `;
+
 const CardWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -98,6 +105,8 @@ const ShopListing = () => {
   const [selectedSizes, setSelectedSizes] = useState(["S", "M", "L", "XL"]); // Default selected sizes
   const [selectedCategories, setSelectedCategories] = useState([]); // Default selected categories
 
+  const location = useLocation();
+
   const getFilteredProductsData = async () => {
     setLoading(true);
     await getAllProducts(
@@ -125,9 +134,29 @@ const ShopListing = () => {
     }
   };
 
+  const parseQueryParams = () => {
+    const queryParams = new URLSearchParams(location.search);
+    const category = queryParams.get("category");
+    if (category) {
+      // Find the category ID based on the name
+      const matchedCategory = categories.find(
+        (cat) => cat.name.toLowerCase() === category.toLowerCase()
+      );
+      if (matchedCategory) {
+        setSelectedCategories([matchedCategory._id]);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchCategories(); // Fetch categories when the component mounts
   }, []);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      parseQueryParams();
+    }
+  }, [categories, location.search]);
 
   useEffect(() => {
     getFilteredProductsData();
